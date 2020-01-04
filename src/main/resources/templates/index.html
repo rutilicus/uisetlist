@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8" http-equiv="Content-Type" content="text/html" />
+        <title>ういのセトリ - 動画一覧</title>
+    </head>
+    <body>
+        <div th:include="layout::header"></div>
+        <center>
+            <table border="1">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="movie : ${movies}">
+                        <td><a th:href="'/movie/' + ${movie.movieId}" th:text="${movie.name}"></a></td>
+                        <td th:text="${#dates.format(movie.date, 'yyyy/MM/dd')}"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </center>
+    </body>
+</html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8" http-equiv="Content-Type" content="text/html" />
+        <title th:text="'ういのセトリ - 動画ページ - ' + ${name}"></title>
+    </head>
+    <body>
+        <div th:include="layout::header"></div>
+        <center>
+            <div id="player"></div>
+            <br>
+            <table border="1">
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>Song Name</th>
+                        <th>Original Writer/Singer</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="song: ${songs}">
+                        <td><a href="#" th:onclick="'jumpTo(' + ${song.time} + ');'" th:text="${song.time / 60} + ':' + ${song.time % 60}"></a></td>
+                        <td th:text="${song.songName}"></td>
+                        <td th:text="${song.writer}"></td>
+                    </tr>
+                    <tr th:if="${songs.isEmpty()}">
+                        <td colspan="3">歌情報はありません。</td>
+                    </tr>
+                </tbody>
+            </table>
+        </center>
+        <script th:inline="javascript">
+            /*<![CDATA[*/
+            var tag = document.createElement('script');
+            tag.src = "https://www.youtube.com/player_api";
+            var firstScriptTag = document.getElementsByTagName('script')[0];
+            firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+            var player;
+            function onYouTubePlayerAPIReady() {
+                player = new YT.Player('player', {
+                    height: '315',
+                    width: '560',
+                    videoId: /*[[${id}]]*/ 'null',
+                    events: {
+                        'onReady': onPlayerReady
+                    }
+                });
+            }
+
+            function jumpTo(time) {
+                player.seekTo(time, true);
+                player.playVideo();
+            }
+
+            function onPlayerReady(event) {
+                [#th:block th:if="${time != null}"]
+                event.target.seekTo(/*[[${time}]]*/ 0, true);
+                event.target.playVideo();
+                [/th:block]
+            }
+            /*]]>*/
+        </script>
+    </body>
+</html>
