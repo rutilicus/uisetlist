@@ -14,3 +14,9 @@ CREATE TABLE IF NOT EXISTS song
     PRIMARY KEY (movieid, time),
     FOREIGN KEY (movieid) REFERENCES movie (movieid)
 );
+
+CREATE TABLE IF NOT EXISTS userdata
+(
+    username text PRIMARY KEY,
+    password text NOT NULL
+);

@@ -2,7 +2,6 @@ package com.rutilicus.uisetlist.controller
 
 import com.rutilicus.uisetlist.ResourceNotFoundException
 import com.rutilicus.uisetlist.service.MovieService
-import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping

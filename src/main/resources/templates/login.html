@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8" http-equiv="Content-Type" content="text/html" />
+        <title>ういのセトリ - ログインページ</title>
+    </head>
+    <body>
+        <center>
+            <div th:if="${param.error}">
+                ユーザが登録されていないかパスワードが誤っています。
+            </div>
+            <div th:if="${param.logout}">
+                ログアウトしました。
+            </div>
+            <form th:action="@{/login}" method="post">
+                <table>
+                    <tr>
+                        <th>
+                            ユーザ名
+                        </th>
+                        <td>
+                            <input type="text" name="user">
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            パスワード
+                        </th>
+                        <td>
+                            <input type="password" name="pass">
+                        </td>
+                    </tr>
+                </table>
+                <input type="submit" value="ログイン">
+            </form>
+        </center>
+    </body>
+</html>

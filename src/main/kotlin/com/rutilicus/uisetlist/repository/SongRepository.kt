@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository
 @Repository
 interface SongRepository: JpaRepository<Song, Int> {
     fun findByMovieIdIsOrderByTimeAsc(movieId: String): List<Song>
+    fun findByMovieIdAndTime(movieId: String, time: Int): List<Song>
 }

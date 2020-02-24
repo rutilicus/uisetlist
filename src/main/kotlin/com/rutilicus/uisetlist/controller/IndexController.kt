@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 
 @Controller
-@RequestMapping(value = ["/", "movie"])
+@RequestMapping("/")
 class IndexController(val service: MovieService) {
     @GetMapping("/")
     fun movie(model: Model): String {

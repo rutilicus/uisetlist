@@ -13,4 +13,15 @@ class SongService(private val songRepository: SongRepository) {
         val sort = Sort.by(Sort.Direction.DESC, "movie_date").and(Sort.by(Sort.Direction.ASC, "time"))
         return songRepository.findAll(sort)
     }
+
+    private fun findAllByMovieIdAndTime(movieId: String, time: Int): List<Song> {
+        return songRepository.findByMovieIdAndTime(movieId, time)
+    }
+
+    fun addSong(song: Song): Song {
+        if (findAllByMovieIdAndTime(song.getMovieId(), song.getTime()).isNotEmpty()) {
+            throw Exception("Already Exists Id And Time.")
+        }
+        return songRepository.saveAndFlush(song)
+    }
 }

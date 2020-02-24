@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" http-equiv="Content-Type" content="text/html" />
+    <title>ういのセトリ - お歌追加</title>
+</head>
+<body>
+<div th:include="layout::header"></div>
+<center>
+    <div th:if="${param.error}">
+        登録に失敗しました。
+    </div>
+    <div th:if="${param.success}">
+        登録しました。
+    </div>
+    <form th:action="@{/admin/procAddSong}" method="post">
+        <table>
+            <tr>
+                <th>
+                    動画ID
+                </th>
+                <td>
+                    <input type="text" name="movieId">
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    再生時間
+                </th>
+                <td>
+                    <input type="number" name="time">
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    曲名
+                </th>
+                <td>
+                    <input type="text" name="songName">
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    アーティスト
+                </th>
+                <td>
+                    <input type="text" name="writer">
+                </td>
+            </tr>
+        </table>
+        <input type="submit" value="作成">
+    </form>
+    <br>
+    <a href="/admin/">管理ページに戻る</a>
+</center>
+</body>
+</html>

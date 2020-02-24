@@ -13,7 +13,15 @@ class MovieService(private val movieRepository: MovieRepository) {
         val sort = Sort.by(Sort.Direction.DESC, "date")
         return movieRepository.findAll(sort)
     }
+
     fun findAllByMovieId(id: String): List<Movie> {
         return movieRepository.findByMovieIdIsOrderBySongs_TimeAsc(id)
+    }
+
+    fun addMovie(movie: Movie): Movie {
+        if (findAllByMovieId(movie.getMovieId()).isNotEmpty()) {
+            throw Exception("Already Exists Id.")
+        }
+        return movieRepository.saveAndFlush(movie)
     }
 }
