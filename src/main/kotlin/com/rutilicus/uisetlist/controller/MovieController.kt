@@ -21,7 +21,7 @@ class MovieController(val service: MovieService) {
         model.addAttribute("time", time.toIntOrNull())
         model.addAttribute("id", id)
         model.addAttribute("name", data.getName())
-        model.addAttribute("songs", data.getSongs())
+        model.addAttribute("songs", data.getSongs().sortedBy { it.getTime() })
         return "movie"
     }
 }
