@@ -1,9 +1,15 @@
 package com.rutilicus.uisetlist.model
 
+import javax.validation.constraints.NotNull
+
 class AddSongForm {
+    @NotNull
     private var movieId = ""
+    @NotNull
     private var time = 0
+    @NotNull
     private var songName = ""
+    @NotNull
     private var writer = ""
 
     fun getMovieId() = movieId
@@ -14,8 +20,10 @@ class AddSongForm {
     fun setMovieId(movieId: String) {
         this.movieId = movieId
     }
-    fun setTime(time: Int) {
-        this.time = time
+    fun setTime(time: Int?) {
+        if (time != null) {
+            this.time = time
+        }
     }
     fun setSongName(songName: String) {
         this.songName = songName

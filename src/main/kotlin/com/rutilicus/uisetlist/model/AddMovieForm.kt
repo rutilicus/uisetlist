@@ -1,11 +1,16 @@
 package com.rutilicus.uisetlist.model
 
-import java.sql.Date
+import org.springframework.format.annotation.DateTimeFormat
+import java.time.LocalDate
+import javax.validation.constraints.NotNull
 
 class AddMovieForm {
+    @NotNull
     private var movieId = ""
+    @NotNull
     private var movieName = ""
-    private var date = Date(0L)
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    private var date = LocalDate.ofEpochDay(0L)
 
     fun getMovieId() = movieId
     fun getMovieName() = movieName
@@ -16,7 +21,9 @@ class AddMovieForm {
     fun setMovieName(movieName: String) {
         this.movieName = movieName
     }
-    fun setDate(date: Date) {
-        this.date = date
+    fun setDate(date: LocalDate?) {
+        if (date != null) {
+            this.date = date
+        }
     }
 }

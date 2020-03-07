@@ -36,7 +36,7 @@
                     投稿日/配信日
                 </th>
                 <td>
-                    <input type="date" name="date">
+                    <input type="date" name="date" id="date">
                 </td>
             </tr>
         </table>
@@ -44,6 +44,15 @@
     </form>
     <br>
     <a href="/admin/">管理ページに戻る</a>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        var date = new Date();
+        var year = date.getFullYear();
+        var month = ("0"+(date.getMonth()+1)).slice(-2);
+        var day = ("0"+date.getDate()).slice(-2);
+        document.getElementById("date").value=year+'-'+month+'-'+day
+        /*]]>*/
+    </script>
 </center>
 </body>
 </html>
