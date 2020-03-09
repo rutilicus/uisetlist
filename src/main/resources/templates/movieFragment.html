@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="movie"
+        th:with="defaultId=${defaultId}?:'', defaultName=${defaultName}?:'', defaultDate=${defaultDate}?:''">
+    <table>
+        <tr>
+            <th>
+                動画ID
+            </th>
+            <td>
+                <input type="text" name="movieId" th:value="${defaultId}">
+            </td>
+        </tr>
+        <tr>
+            <th>
+                動画名
+            </th>
+            <td>
+                <input type="text" name="movieName" th:value="${defaultName}">
+            </td>
+        </tr>
+        <tr>
+            <th>
+                投稿日/配信日
+            </th>
+            <td>
+                <input type="date" name="date" id="date" th:value="${defaultDate}">
+            </td>
+        </tr>
+    </table>
+</div>
+</html>

@@ -2,20 +2,22 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8" http-equiv="Content-Type" content="text/html" />
-    <title>ういのセトリ - お歌追加</title>
+    <title>ういのセトリ - 動画編集</title>
 </head>
 <body>
 <div th:insert="layout::header"></div>
 <center>
     <div th:if="${param.error}">
-        登録に失敗しました。
+        更新に失敗しました。
     </div>
     <div th:if="${param.success}">
-        登録しました。
+        更新しました。
     </div>
-    <form th:action="@{/admin/procAddSong}" method="post">
+    <form th:action="@{/admin/procEditSong}" method="post">
+        <input type="hidden" name="originalId" th:value="${originalId}">
+        <input type="hidden" name="originalTime" th:value="${originalTime}">
         <div th:insert="songFragment::song"></div>
-        <input type="submit" value="作成">
+        <input type="submit" value="更新">
     </form>
     <br>
     <a href="/admin/">管理ページに戻る</a>

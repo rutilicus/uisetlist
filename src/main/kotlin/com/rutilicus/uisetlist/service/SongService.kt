@@ -1,6 +1,7 @@
 package com.rutilicus.uisetlist.service
 
 import com.rutilicus.uisetlist.model.Song
+import com.rutilicus.uisetlist.model.SongKey
 import com.rutilicus.uisetlist.repository.SongRepository
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
@@ -14,14 +15,25 @@ class SongService(private val songRepository: SongRepository) {
         return songRepository.findAll(sort)
     }
 
-    private fun findAllByMovieIdAndTime(movieId: String, time: Int): List<Song> {
+    fun findAllByMovieIdAndTime(movieId: String, time: Int): List<Song> {
         return songRepository.findByMovieIdAndTime(movieId, time)
+    }
+
+    fun entrySong(song: Song): Song {
+        return songRepository.saveAndFlush(song)
     }
 
     fun addSong(song: Song): Song {
         if (findAllByMovieIdAndTime(song.getMovieId(), song.getTime()).isNotEmpty()) {
             throw Exception("Already Exists Id And Time.")
         }
-        return songRepository.saveAndFlush(song)
+        return entrySong(song)
+    }
+
+    fun deleteByMovieIdAndTime(id: String, time: Int) {
+        songRepository.deleteById(SongKey().apply {
+            setMovieId(id)
+            setTime(time)
+        })
     }
 }

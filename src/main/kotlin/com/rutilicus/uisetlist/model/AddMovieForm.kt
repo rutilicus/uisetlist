@@ -4,7 +4,7 @@ import org.springframework.format.annotation.DateTimeFormat
 import java.time.LocalDate
 import javax.validation.constraints.NotNull
 
-class AddMovieForm {
+open class AddMovieForm {
     @NotNull
     private var movieId = ""
     @NotNull

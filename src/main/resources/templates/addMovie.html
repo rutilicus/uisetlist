@@ -14,32 +14,7 @@
         登録しました。
     </div>
     <form th:action="@{/admin/procAddMovie}" method="post">
-        <table>
-            <tr>
-                <th>
-                    動画ID
-                </th>
-                <td>
-                    <input type="text" name="movieId">
-                </td>
-            </tr>
-            <tr>
-                <th>
-                    動画名
-                </th>
-                <td>
-                    <input type="text" name="movieName">
-                </td>
-            </tr>
-            <tr>
-                <th>
-                    投稿日/配信日
-                </th>
-                <td>
-                    <input type="date" name="date" id="date">
-                </td>
-            </tr>
-        </table>
+        <div th:insert="movieFragment::movie"></div>
         <input type="submit" value="作成">
     </form>
     <br>

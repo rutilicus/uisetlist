@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<header th:fragment="songList(songs)" th:with="admin=${admin}?:false">
+    <table border="1">
+        <thead>
+        <tr>
+            <th>Song Name</th>
+            <th>Original Writer/Singer</th>
+            <th>Movie Name</th>
+            <div th:if="${admin}">
+                <th>Edit</th>
+                <th>Delete</th>
+            </div>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="song : ${songs}">
+            <td><a th:href="'/movie/' + ${song.movie.movieId} + '?time=' + ${song.time}"
+                   th:text="${song.songName}"></a></td>
+            <td th:text="${song.writer}"></td>
+            <td><a th:href="'/movie/' + ${song.movie.movieId}" th:text="${song.movie.name}"></a></td>
+            <div th:if="${admin}">
+                <td><input type="button" value="Edit"
+                           th:movieId="${song.movie.movieId}"
+                           th:songTime="${song.time}"
+                           onclick="onEditClick(this.getAttribute('movieId'), this.getAttribute('songTime'));"/>
+                </td>
+                <td><input type="button" value="Delete"
+                           th:movieId="${song.movie.movieId}"
+                           th:songName="${song.songName}"
+                           th:songTime="${song.time}"
+                           onclick="onDeleteClick(this.getAttribute('movieId'), this.getAttribute('songTime'), this.getAttribute('songName'));"/>
+                </td>
+            </div>
+        </tr>
+        </tbody>
+    </table>
+</header>
+</html>

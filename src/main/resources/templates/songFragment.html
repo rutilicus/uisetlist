@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<header th:fragment="song"
+        th:with="defaultId=${defaultId}?:'', defaultTime=${defaultTime}?:'0',
+                 defaultName=${defaultName}?:'', defaultWriter=${defaultWriter}?:''">
+    <table>
+        <tr>
+            <th>
+                動画ID
+            </th>
+            <td>
+                <input type="text" name="movieId" th:value="${defaultId}">
+            </td>
+        </tr>
+        <tr>
+            <th>
+                再生時間
+            </th>
+            <td>
+                <input type="number" name="time" th:value="${defaultTime}">
+            </td>
+        </tr>
+        <tr>
+            <th>
+                曲名
+            </th>
+            <td>
+                <input type="text" name="songName" th:value="${defaultName}">
+            </td>
+        </tr>
+        <tr>
+            <th>
+                アーティスト
+            </th>
+            <td>
+                <input type="text" name="writer" th:value="${defaultWriter}">
+            </td>
+        </tr>
+    </table>
+</header>
+</html>

@@ -2,7 +2,7 @@ package com.rutilicus.uisetlist.model
 
 import javax.validation.constraints.NotNull
 
-class AddSongForm {
+open class AddSongForm {
     @NotNull
     private var movieId = ""
     @NotNull

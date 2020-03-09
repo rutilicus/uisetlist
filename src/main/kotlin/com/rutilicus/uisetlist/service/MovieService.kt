@@ -18,10 +18,18 @@ class MovieService(private val movieRepository: MovieRepository) {
         return movieRepository.findByMovieIdIsOrderBySongs_TimeAsc(id)
     }
 
+    fun entryMovie(movie: Movie): Movie {
+        return movieRepository.saveAndFlush(movie)
+    }
+
     fun addMovie(movie: Movie): Movie {
         if (findAllByMovieId(movie.getMovieId()).isNotEmpty()) {
             throw Exception("Already Exists Id.")
         }
-        return movieRepository.saveAndFlush(movie)
+        return entryMovie(movie)
+    }
+
+    fun deleteByMovieId(id: String) {
+        movieRepository.deleteById(id)
     }
 }

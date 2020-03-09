@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8" http-equiv="Content-Type" content="text/html" />
+        <title>ういのセトリ - お歌管理</title>
+    </head>
+    <body>
+        <div th:insert="layout::header"></div>
+        <center>
+            <div th:if="${param.error}">
+                削除に失敗しました。
+            </div>
+            <div th:if="${param.success}">
+                削除しました。
+            </div>
+            <div th:insert="songListFragment::songList(${songs})" th:with="admin=true"></div>
+            <a href="/admin/">管理ページに戻る</a>
+        </center>
+
+        <form th:action="@{/admin/procDelSong}" method="post" id="deleteForm">
+            <input type="hidden" name="movieId" id="deleteMovieId">
+            <input type="hidden" name="time" id="deleteTime">
+        </form>
+        <script th:inline="javascript">
+        /*<![CDATA[*/
+        function onEditClick(movieId, songTime) {
+            location.href = '/admin/editSong/' + movieId + ',' + songTime;
+        }
+        function onDeleteClick(movieId, songTime, songName) {
+            var ret = confirm(songName + 'を削除してもよろしいですか？')
+            if (ret == true) {
+                var form = document.getElementById('deleteForm');
+                var deleteId = document.getElementById('deleteMovieId');
+                var deleteTime = document.getElementById('deleteTime');
+                deleteId.setAttribute('value', movieId);
+                deleteTime.setAttribute('value', songTime);
+                form.submit();
+            }
+        }
+        /*]]>*/
+        </script>
+    </body>
+</html>

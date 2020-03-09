@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8" http-equiv="Content-Type" content="text/html" />
+        <title>ういのセトリ - 動画管理</title>
+    </head>
+    <body>
+        <div th:insert="layout::header"></div>
+        <center>
+            <div th:if="${param.error}">
+                削除に失敗しました。
+            </div>
+            <div th:if="${param.success}">
+                削除しました。
+            </div>
+            <div th:insert="movieListFragment::movieList(${movies})" th:with="admin=true"></div>
+            <a href="/admin/">管理ページに戻る</a>
+        </center>
+
+        <form th:action="@{/admin/procDelMovie}" method="post" id="deleteForm">
+            <input type="hidden" name="movieId" id="deleteMovieId">
+        </form>
+        <script th:inline="javascript">
+        /*<![CDATA[*/
+        function onEditClick(movieId) {
+            location.href = '/admin/editMovie/' + movieId;
+        }
+        function onDeleteClick(movieId, movieName) {
+            var ret = confirm(movieName + 'を削除してもよろしいですか？')
+            if (ret == true) {
+                var form = document.getElementById('deleteForm');
+                var deleteId = document.getElementById('deleteMovieId');
+                deleteId.setAttribute('value', movieId);
+                form.submit();
+            }
+        }
+        /*]]>*/
+        </script>
+    </body>
+</html>
