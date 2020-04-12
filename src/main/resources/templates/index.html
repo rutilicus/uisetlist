@@ -2,6 +2,9 @@
 <html xmlns:th="http://www.thymeleaf.org">
     <head>
         <meta charset="UTF-8" http-equiv="Content-Type" content="text/html" />
+        <th:block th:each="metaTag : ${metaTags}">
+            <meta th:name="${metaTag.name}" th:content="${metaTag.content}" />
+        </th:block>
         <title>ういのセトリ - 動画一覧</title>
     </head>
     <body>

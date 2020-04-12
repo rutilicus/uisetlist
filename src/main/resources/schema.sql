@@ -20,3 +20,9 @@ CREATE TABLE IF NOT EXISTS userdata
     username text PRIMARY KEY,
     password text NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS metatags
+(
+    name text PRIMARY KEY,
+    content text NOT NULL
+);

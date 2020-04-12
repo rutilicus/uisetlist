@@ -1,6 +1,7 @@
 package com.rutilicus.uisetlist.controller
 
 import com.rutilicus.uisetlist.Commons
+import com.rutilicus.uisetlist.service.MetaTagsService
 import com.rutilicus.uisetlist.service.MovieService
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
@@ -10,10 +11,11 @@ import org.springframework.web.util.UriComponentsBuilder
 
 @Controller
 @RequestMapping("/")
-class IndexController(val service: MovieService) {
+class IndexController(val movieService: MovieService, val metaTagsService: MetaTagsService) {
     @GetMapping("/")
     fun movie(model: Model): String {
-        model.addAttribute("movies", service.findAll())
+        model.addAttribute("movies", movieService.findAll())
+        model.addAttribute("metaTags", metaTagsService.findAll())
         return "index"
     }
 

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" http-equiv="Content-Type" content="text/html" />
+    <title>ういのセトリ - indexページmetaタグ管理</title>
+</head>
+<body>
+<div th:insert="layout::header"></div>
+<center>
+    <div th:if="${param.addError}">
+        登録に失敗しました。
+    </div>
+    <div th:if="${param.addSuccess}">
+        登録しました。
+    </div>
+    <div th:if="${param.deleteError}">
+        削除に失敗しました。
+    </div>
+    <div th:if="${param.deleteSuccess}">
+        削除しました。
+    </div>
+    <form th:action="@{/admin/procAddMeta}" method="post">
+        <table>
+            <tr>
+                <th>
+                    name
+                </th>
+                <td>
+                    <input type="text" name="name">
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    content
+                </th>
+                <td>
+                    <input type="text" name="content">
+                </td>
+            </tr>
+        </table>
+        <input type="submit" value="登録">
+    </form>
+    <br>
+    <table border="1">
+        <thead>
+        <tr>
+            <th>name</th>
+            <th>content</th>
+            <th>Delete</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="metaTag : ${metaTags}">
+            <td th:text="${metaTag.name}"></td>
+            <td th:text="${metaTag.content}"></td>
+            <td><input type="button" value="Delete"
+                       th:name="${metaTag.name}"
+                       onclick="onDeleteClick(this.getAttribute('name'));"/>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <br>
+    <a href="/admin/">管理ページに戻る</a>
+</center>
+
+<form th:action="@{/admin/procDelMeta}" method="post" id="deleteForm">
+    <input type="hidden" name="name" id="deleteName">
+</form>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    function onDeleteClick(name) {
+        var ret = confirm(name + 'を削除してもよろしいですか？')
+        if (ret == true) {
+            var form = document.getElementById('deleteForm');
+            var deleteId = document.getElementById('deleteName');
+            deleteId.setAttribute('value', name);
+            form.submit();
+        }
+    }
+    /*]]>*/
+</script>
+</body>
+</html>

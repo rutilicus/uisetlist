@@ -3,6 +3,7 @@ package com.rutilicus.uisetlist.controller
 import com.rutilicus.uisetlist.Commons
 import com.rutilicus.uisetlist.ResourceNotFoundException
 import com.rutilicus.uisetlist.model.*
+import com.rutilicus.uisetlist.service.MetaTagsService
 import com.rutilicus.uisetlist.service.MovieService
 import com.rutilicus.uisetlist.service.SongService
 import org.springframework.stereotype.Controller
@@ -15,7 +16,9 @@ import java.util.*
 
 @Controller
 @RequestMapping("admin")
-class AdminController(val movieService: MovieService, val songService: SongService) {
+class AdminController(val movieService: MovieService,
+                      val songService: SongService,
+                      val metaTagsService: MetaTagsService) {
     @GetMapping("/")
     fun adminPage(model: Model): String {
         return "admin"
@@ -41,6 +44,12 @@ class AdminController(val movieService: MovieService, val songService: SongServi
     fun songListPage(model: Model): String {
         model.addAttribute("songs", songService.findAll())
         return "adminSongList"
+    }
+
+    @GetMapping("/metaConfig")
+    fun metaConfigPage(model: Model): String {
+        model.addAttribute("metaTags", metaTagsService.findAll())
+        return "metaConfig"
     }
 
     @GetMapping("/editMovie/{id}")
@@ -288,5 +297,63 @@ class AdminController(val movieService: MovieService, val songService: SongServi
                         builder,
                         "/admin/songList",
                         listOf(Pair("success", Optional.empty())))
+    }
+
+    @PostMapping("/procAddMeta")
+    fun addMetaProc(@ModelAttribute form: AddMetaForm, builder: UriComponentsBuilder): String {
+        val name = form.getName()
+        val content = form.getContent()
+
+        if (name.isBlank() || content.isBlank()) {
+            // パラメータ不正のため失敗
+            return "redirect:" +
+                    Commons.getPathUriString(
+                            builder,
+                            "/admin/metaConfig",
+                            listOf(Pair("addError", Optional.empty())))
+        }
+
+        try {
+            MetaTags().apply {
+                this.setName(name)
+                this.setContent(content)
+                metaTagsService.addMetaTag(this)
+            }
+        } catch (e: Exception) {
+            return "redirect:" +
+                    Commons.getPathUriString(
+                            builder,
+                            "/admin/metaConfig",
+                            listOf(Pair("addError", Optional.empty())))
+        }
+
+        return "redirect:" +
+                Commons.getPathUriString(
+                        builder,
+                        "/admin/metaConfig",
+                        listOf(Pair("addSuccess", Optional.empty())))
+    }
+
+    @PostMapping("/procDelMeta")
+    fun delMetaProc(@ModelAttribute form: DelMetaForm, builder: UriComponentsBuilder): String {
+        val name = form.getName()
+
+        val metaTags = metaTagsService.findAllByName(name)
+
+        if (metaTags.isEmpty()) {
+            return "redirect:" +
+                    Commons.getPathUriString(
+                            builder,
+                            "/admin/metaConfig",
+                            listOf(Pair("deleteError", Optional.empty())))
+        }
+
+        metaTagsService.deleteByName(name)
+
+        return "redirect:" +
+                Commons.getPathUriString(
+                        builder,
+                        "/admin/metaConfig",
+                        listOf(Pair("deleteSuccess", Optional.empty())))
     }
 }
