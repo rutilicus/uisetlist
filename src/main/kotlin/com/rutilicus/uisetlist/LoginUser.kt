@@ -5,8 +5,8 @@ import org.springframework.security.core.authority.AuthorityUtils
 import org.springframework.security.core.userdetails.User
 
 class LoginUser(userdata: Userdata): User(
-        userdata.getUsername(),
-        userdata.getPassword(),
+        userdata.username,
+        userdata.password,
         AuthorityUtils.createAuthorityList("ADMIN")) {
     var loginUser: Userdata? = null
 

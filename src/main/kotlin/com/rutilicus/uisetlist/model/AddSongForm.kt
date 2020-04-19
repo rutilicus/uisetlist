@@ -4,31 +4,19 @@ import javax.validation.constraints.NotNull
 
 open class AddSongForm {
     @NotNull
-    private var movieId = ""
-    @NotNull
-    private var time = 0
-    @NotNull
-    private var songName = ""
-    @NotNull
-    private var writer = ""
+    var movieId = ""
 
-    fun getMovieId() = movieId
-    fun getTime() = time
-    fun getSongName() = songName
-    fun getWriter() = writer
-
-    fun setMovieId(movieId: String) {
-        this.movieId = movieId
-    }
-    fun setTime(time: Int?) {
-        if (time != null) {
-            this.time = time
+    @NotNull
+    var time: Int? = 0
+        set(value) {
+            if (value != null) {
+                field = value
+            }
         }
-    }
-    fun setSongName(songName: String) {
-        this.songName = songName
-    }
-    fun setWriter(writer: String) {
-        this.writer = writer
-    }
+
+    @NotNull
+    var songName = ""
+
+    @NotNull
+    var writer = ""
 }

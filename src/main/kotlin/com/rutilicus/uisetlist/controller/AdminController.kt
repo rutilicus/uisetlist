@@ -60,8 +60,8 @@ class AdminController(val movieService: MovieService,
         val formatter = DateTimeFormatter.ISO_DATE
         model.addAttribute("originalId", id)
         model.addAttribute("defaultId", id)
-        model.addAttribute("defaultName", data.getName())
-        model.addAttribute("defaultDate", data.getDate().toLocalDate().format(formatter))
+        model.addAttribute("defaultName", data.name)
+        model.addAttribute("defaultDate", data.date.toLocalDate().format(formatter))
         return "editMovie"
     }
 
@@ -81,24 +81,24 @@ class AdminController(val movieService: MovieService,
         model.addAttribute("originalTime", time)
         model.addAttribute("defaultId", id)
         model.addAttribute("defaultTime", time)
-        model.addAttribute("defaultName", data.getSongName())
-        model.addAttribute("defaultWriter", data.getWriter())
+        model.addAttribute("defaultName", data.songName)
+        model.addAttribute("defaultWriter", data.writer)
 
         return "editSong"
     }
 
     @PostMapping("/procAddMovie")
     fun addMovieProc(@ModelAttribute form: AddMovieForm, builder: UriComponentsBuilder): String {
-        val id = form.getMovieId()
-        val name = form.getMovieName()
-        val date = Date.valueOf(form.getDate())
+        val id = form.movieId
+        val name = form.movieName
+        val date = Date.valueOf(form.date)
 
         val movie = Movie()
-        movie.setMovieId(id)
-        movie.setName(name)
-        movie.setDate(date)
+        movie.movieId = id
+        movie.name = name
+        movie.date = date
 
-        if (movie.getMovieId() == "" || name == "") {
+        if (movie.movieId.isBlank() || name.isBlank()) {
             // パラメータ不正のため失敗
             return "redirect:" +
                     Commons.getPathUriString(
@@ -127,18 +127,18 @@ class AdminController(val movieService: MovieService,
 
     @PostMapping("/procAddSong")
     fun addSongProc(@ModelAttribute form: AddSongForm, builder: UriComponentsBuilder): String {
-        val id = form.getMovieId()
-        val songName = form.getSongName()
-        val time = form.getTime()
-        val writer = form.getWriter()
+        val id = form.movieId
+        val songName = form.songName
+        val time = form.time ?: 0
+        val writer = form.writer
 
         val song = Song()
-        song.setMovieId(id)
-        song.setSongName(songName)
-        song.setTime(time)
-        song.setWriter(writer)
+        song.movieId = id
+        song.songName = songName
+        song.time = time
+        song.writer = writer
 
-        if (song.getMovieId() == "" || songName == "" || writer == "") {
+        if (song.movieId.isBlank() || songName.isBlank() || writer.isBlank()) {
             // パラメータ不正のため失敗
             return "redirect:" +
                     Commons.getPathUriString(
@@ -148,7 +148,7 @@ class AdminController(val movieService: MovieService,
         }
 
         try {
-            song.setMovie(movieService.findAllByMovieId(id).first())
+            song.movie = movieService.findAllByMovieId(id).first()
             songService.addSong(song)
         } catch (e: Exception) {
             // 登録済みデータまたは未登録動画データのため失敗
@@ -168,8 +168,8 @@ class AdminController(val movieService: MovieService,
 
     @PostMapping("/procEditMovie")
     fun editMovieProc(@ModelAttribute form: EditMovieForm, builder: UriComponentsBuilder): String {
-        val originalId = form.getOriginalId()
-        val newId = form.getMovieId()
+        val originalId = form.originalId
+        val newId = form.movieId
         val movies = movieService.findAllByMovieId(originalId)
 
         if (movies.isEmpty()) {
@@ -184,12 +184,12 @@ class AdminController(val movieService: MovieService,
         val movie = if (originalId != newId) {
             // 新IDと旧IDが異なるので、一度削除してから登録しなおす
             movieService.deleteByMovieId(originalId)
-            Movie().apply { setMovieId(newId) }
+            Movie().apply { movieId = newId }
         } else {
             movies.first()
         }
-        movie.setName(form.getMovieName())
-        movie.setDate(Date.valueOf(form.getDate()))
+        movie.name = form.movieName
+        movie.date = Date.valueOf(form.date)
 
         movieService.entryMovie(movie)
 
@@ -202,10 +202,10 @@ class AdminController(val movieService: MovieService,
 
     @PostMapping("/procEditSong")
     fun editSongProc(@ModelAttribute form: EditSongForm, builder: UriComponentsBuilder): String {
-        val originalId = form.getOriginalId()
-        val originalTime = form.getOriginalTime()
-        val newId = form.getMovieId()
-        val newTime = form.getTime()
+        val originalId = form.originalId
+        val originalTime = form.originalTime
+        val newId = form.movieId
+        val newTime = form.time ?: 0
         val songs = songService.findAllByMovieIdAndTime(originalId, originalTime)
 
         if (songs.isEmpty()) {
@@ -221,10 +221,10 @@ class AdminController(val movieService: MovieService,
             // 新IDと旧IDが異なるので、一度削除してから登録しなおす
             songService.deleteByMovieIdAndTime(originalId, originalTime)
             Song().apply {
-                setMovieId(newId)
-                setTime(newTime)
+                movieId = newId
+                time = newTime
                 try {
-                    setMovie(movieService.findAllByMovieId(newId).first())
+                    movie = movieService.findAllByMovieId(newId).first()
                 } catch (e: Exception) {
                     // 親動画取得失敗
                     return "redirect:" +
@@ -238,8 +238,8 @@ class AdminController(val movieService: MovieService,
             songs.first()
         }
 
-        song.setSongName(form.getSongName())
-        song.setWriter(form.getWriter())
+        song.songName = form.songName
+        song.writer = form.writer
 
         songService.entrySong(song)
 
@@ -252,11 +252,11 @@ class AdminController(val movieService: MovieService,
 
     @PostMapping("/procDelMovie")
     fun delMovieProc(@ModelAttribute form: DelMovieForm, builder: UriComponentsBuilder): String {
-        val id = form.getMovieId()
+        val id = form.movieId
 
         val movies = movieService.findAllByMovieId(id)
 
-        if (movies.isEmpty() || movies.first().getSongs().isNotEmpty()) {
+        if (movies.isEmpty() || movies.first().songs.isNotEmpty()) {
             // 削除対象の動画が存在しないまたは動画に結び付く歌が存在する
             return "redirect:" +
                     Commons.getPathUriString(
@@ -276,8 +276,8 @@ class AdminController(val movieService: MovieService,
 
     @PostMapping("/procDelSong")
     fun delSongProc(@ModelAttribute form: DelSongForm, builder: UriComponentsBuilder): String {
-        val id = form.getMovieId()
-        val time = form.getTime()
+        val id = form.movieId
+        val time = form.time
 
         val songs = songService.findAllByMovieIdAndTime(id, time)
 
@@ -301,8 +301,8 @@ class AdminController(val movieService: MovieService,
 
     @PostMapping("/procAddMeta")
     fun addMetaProc(@ModelAttribute form: AddMetaForm, builder: UriComponentsBuilder): String {
-        val name = form.getName()
-        val content = form.getContent()
+        val name = form.name
+        val content = form.content
 
         if (name.isBlank() || content.isBlank()) {
             // パラメータ不正のため失敗
@@ -315,8 +315,8 @@ class AdminController(val movieService: MovieService,
 
         try {
             MetaTags().apply {
-                this.setName(name)
-                this.setContent(content)
+                this.name = name
+                this.content = content
                 metaTagsService.addMetaTag(this)
             }
         } catch (e: Exception) {
@@ -336,7 +336,7 @@ class AdminController(val movieService: MovieService,
 
     @PostMapping("/procDelMeta")
     fun delMetaProc(@ModelAttribute form: DelMetaForm, builder: UriComponentsBuilder): String {
-        val name = form.getName()
+        val name = form.name
 
         val metaTags = metaTagsService.findAllByName(name)
 

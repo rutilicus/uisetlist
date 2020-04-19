@@ -6,24 +6,16 @@ import javax.validation.constraints.NotNull
 
 open class AddMovieForm {
     @NotNull
-    private var movieId = ""
-    @NotNull
-    private var movieName = ""
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-    private var date = LocalDate.ofEpochDay(0L)
+    var movieId = ""
 
-    fun getMovieId() = movieId
-    fun getMovieName() = movieName
-    fun getDate() = date
-    fun setMovieId(movieId: String) {
-        this.movieId = movieId
-    }
-    fun setMovieName(movieName: String) {
-        this.movieName = movieName
-    }
-    fun setDate(date: LocalDate?) {
-        if (date != null) {
-            this.date = date
+    @NotNull
+    var movieName = ""
+
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    var date: LocalDate? = LocalDate.ofEpochDay(0L)
+        set(value) {
+            if (value != null) {
+                field = value
+            }
         }
-    }
 }

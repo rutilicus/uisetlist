@@ -23,7 +23,7 @@ class MovieService(private val movieRepository: MovieRepository) {
     }
 
     fun addMovie(movie: Movie): Movie {
-        if (findAllByMovieId(movie.getMovieId()).isNotEmpty()) {
+        if (findAllByMovieId(movie.movieId).isNotEmpty()) {
             throw Exception("Already Exists Id.")
         }
         return entryMovie(movie)

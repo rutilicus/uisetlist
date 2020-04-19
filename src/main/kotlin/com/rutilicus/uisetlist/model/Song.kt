@@ -9,46 +9,24 @@ import javax.persistence.*
 class Song {
     @Id
     @Column(name = "movieid")
-    private var movieId = ""
+    var movieId = ""
+        set(value) {
+            if (value.length == ID_LEN) {
+                field = value
+            }
+        }
 
     @Id
     @Column(name = "time")
-    private var time = 0
+    var time = 0
 
     @Column(name = "songname")
-    private var songName = ""
+    var songName = ""
 
     @Column(name = "writer")
-    private var writer = ""
+    var writer = ""
 
     @ManyToOne
     @JoinColumn(name = "movieid", insertable = false, updatable = false)
-    private var movie = Movie()
-
-    fun getMovieId() = movieId
-    fun setMovieId(id: String) {
-        if (id.length == ID_LEN) {
-            this.movieId = id
-        }
-    }
-
-    fun getTime() = time
-    fun setTime(time: Int) {
-        this.time = time
-    }
-
-    fun getSongName() = songName
-    fun setSongName(songName: String) {
-        this.songName = songName
-    }
-
-    fun getWriter() = writer
-    fun setWriter(writer: String) {
-        this.writer = writer
-    }
-
-    fun getMovie() = movie
-    fun setMovie(movie: Movie) {
-        this.movie = movie
-    }
+    var movie = Movie()
 }

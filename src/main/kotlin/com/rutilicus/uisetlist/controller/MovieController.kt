@@ -20,8 +20,8 @@ class MovieController(val service: MovieService) {
         val data = service.findAllByMovieId(id).getOrNull(0) ?: throw ResourceNotFoundException()
         model.addAttribute("time", time.toIntOrNull())
         model.addAttribute("id", id)
-        model.addAttribute("name", data.getName())
-        model.addAttribute("songs", data.getSongs().sortedBy { it.getTime() })
+        model.addAttribute("name", data.name)
+        model.addAttribute("songs", data.songs.sortedBy { it.time })
         return "movie"
     }
 }

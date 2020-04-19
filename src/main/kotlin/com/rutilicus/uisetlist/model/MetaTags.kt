@@ -10,18 +10,8 @@ import javax.persistence.Table
 class MetaTags {
     @Id
     @Column(name = "name")
-    private var name = ""
+    var name = ""
 
     @Column(name = "content")
-    private var content = ""
-
-    fun getName() = name
-    fun setName(name: String) {
-        this.name = name
-    }
-
-    fun getContent() = content
-    fun setContent(content: String) {
-        this.content = content
-    }
+    var content = ""
 }

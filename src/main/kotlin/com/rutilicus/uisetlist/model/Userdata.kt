@@ -10,18 +10,8 @@ import javax.persistence.Table
 class Userdata {
     @Id
     @Column(name = "username")
-    private var username = ""
+    var username = ""
 
     @Column(name = "password")
-    private var password = ""
-
-    fun getUsername() = username
-    fun setUsername(username: String) {
-        this.username = username
-    }
-
-    fun getPassword() = password
-    fun setPassword(password: String) {
-        this.password = password
-    }
+    var password = ""
 }

@@ -24,7 +24,7 @@ class SongService(private val songRepository: SongRepository) {
     }
 
     fun addSong(song: Song): Song {
-        if (findAllByMovieIdAndTime(song.getMovieId(), song.getTime()).isNotEmpty()) {
+        if (findAllByMovieIdAndTime(song.movieId, song.time).isNotEmpty()) {
             throw Exception("Already Exists Id And Time.")
         }
         return entrySong(song)
@@ -32,8 +32,8 @@ class SongService(private val songRepository: SongRepository) {
 
     fun deleteByMovieIdAndTime(id: String, time: Int) {
         songRepository.deleteById(SongKey().apply {
-            setMovieId(id)
-            setTime(time)
+            this.movieId = id
+            this.time = time
         })
     }
 }
