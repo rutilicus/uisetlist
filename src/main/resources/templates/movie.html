@@ -5,30 +5,32 @@
         <title th:text="'ういのセトリ - 動画ページ - ' + ${name}"></title>
     </head>
     <body>
-        <div th:insert="layout::header"></div>
-        <center>
-            <div id="player"></div>
-            <br>
-            <table border="1">
-                <thead>
-                    <tr>
-                        <th>Time</th>
-                        <th>Song Name</th>
-                        <th>Original Writer/Singer</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="song: ${songs}">
-                        <td><a href="#" th:onclick="'jumpTo(' + ${song.time} + ');'" th:text="${song.time / 60} + ':' + ${song.time % 60}"></a></td>
-                        <td th:text="${song.songName}"></td>
-                        <td th:text="${song.writer}"></td>
-                    </tr>
-                    <tr th:if="${songs.isEmpty()}">
-                        <td colspan="3">歌情報はありません。</td>
-                    </tr>
-                </tbody>
-            </table>
-        </center>
+        <th:block th:insert="layout::header" />
+        <main>
+            <center>
+                <div id="player"></div>
+                <br>
+                <table border="1">
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>Song Name</th>
+                            <th>Original Writer/Singer</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="song: ${songs}">
+                            <td><a href="#" th:onclick="'jumpTo(' + ${song.time} + ');'" th:text="${song.time / 60} + ':' + ${song.time % 60}"></a></td>
+                            <td th:text="${song.songName}"></td>
+                            <td th:text="${song.writer}"></td>
+                        </tr>
+                        <tr th:if="${songs.isEmpty()}">
+                            <td colspan="3">歌情報はありません。</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </center>
+        </main>
         <script th:inline="javascript">
             /*<![CDATA[*/
             var tag = document.createElement('script');

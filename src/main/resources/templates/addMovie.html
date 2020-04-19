@@ -5,20 +5,23 @@
     <title>ういのセトリ - 動画追加</title>
 </head>
 <body>
-<div th:insert="layout::header"></div>
-<center>
-    <div th:if="${param.error}">
-        登録に失敗しました。
-    </div>
-    <div th:if="${param.success}">
-        登録しました。
-    </div>
-    <form th:action="@{/admin/procAddMovie}" method="post">
-        <div th:insert="movieFragment::movie"></div>
-        <input type="submit" value="作成">
-    </form>
-    <br>
-    <a href="/admin/">管理ページに戻る</a>
+    <th:block th:insert="layout::header" />
+    <main>
+        <center>
+            <th:block th:if="${param.error}">
+                登録に失敗しました。
+            </th:block>
+            <th:block th:if="${param.success}">
+                登録しました。
+            </th:block>
+            <form th:action="@{/admin/procAddMovie}" method="post">
+                <th:block th:insert="movieFragment::movie" />
+                <input type="submit" value="作成">
+            </form>
+            <br>
+            <a href="/admin/">管理ページに戻る</a>
+        </center>
+    </main>
     <script th:inline="javascript">
         /*<![CDATA[*/
         var date = new Date();
@@ -28,6 +31,5 @@
         document.getElementById("date").value=year+'-'+month+'-'+day
         /*]]>*/
     </script>
-</center>
 </body>
 </html>

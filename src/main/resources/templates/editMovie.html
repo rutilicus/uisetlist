@@ -5,21 +5,23 @@
     <title>ういのセトリ - 動画編集</title>
 </head>
 <body>
-<div th:insert="layout::header"></div>
-<center>
-    <div th:if="${param.error}">
-        更新に失敗しました。
-    </div>
-    <div th:if="${param.success}">
-        更新しました。
-    </div>
-    <form th:action="@{/admin/procEditMovie}" method="post">
-        <input type="hidden" name="originalId" th:value="${originalId}">
-        <div th:insert="movieFragment::movie"></div>
-        <input type="submit" value="更新">
-    </form>
-    <br>
-    <a href="/admin/">管理ページに戻る</a>
-</center>
+    <th:block th:insert="layout::header" />
+    <main>
+        <center>
+            <th:block th:if="${param.error}">
+                更新に失敗しました。
+            </th:block>
+            <th:block th:if="${param.success}">
+                更新しました。
+            </th:block>
+            <form th:action="@{/admin/procEditMovie}" method="post">
+                <input type="hidden" name="originalId" th:value="${originalId}">
+                <th:block th:insert="movieFragment::movie" />
+                <input type="submit" value="更新">
+            </form>
+            <br>
+            <a href="/admin/">管理ページに戻る</a>
+        </center>
+    </main>
 </body>
 </html>

@@ -8,9 +8,11 @@
         <title>ういのセトリ - 動画一覧</title>
     </head>
     <body>
-        <div th:insert="layout::header"></div>
-        <center>
-            <div th:insert="movieListFragment::movieList(${movies})"></div>
-        </center>
+        <th:block th:insert="layout::header" />
+        <main>
+            <center>
+                <th:block th:insert="movieListFragment::movieList(${movies})" />
+            </center>
+        </main>
     </body>
 </html>

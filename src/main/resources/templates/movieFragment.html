@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<div th:fragment="movie"
+<th:block th:fragment="movie"
         th:with="defaultId=${defaultId}?:'', defaultName=${defaultName}?:'', defaultDate=${defaultDate}?:''">
     <table>
         <tr>
@@ -28,5 +28,5 @@
             </td>
         </tr>
     </table>
-</div>
+</th:block>
 </html>

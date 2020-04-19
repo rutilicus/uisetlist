@@ -1,22 +1,22 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<div th:fragment="movieList(movies)" th:with="admin=${admin}?:false">
+<th:block th:fragment="movieList(movies)" th:with="admin=${admin}?:false">
     <table border="1">
         <thead>
         <tr>
             <th>Name</th>
             <th>Date</th>
-            <div th:if="${admin}">
+            <th:block th:if="${admin}">
                 <th>Edit</th>
                 <th>Delete</th>
-            </div>
+            </th:block>
         </tr>
         </thead>
         <tbody>
         <tr th:each="movie : ${movies}">
             <td><a th:href="'/movie/' + ${movie.movieId}" th:text="${movie.name}"></a></td>
             <td th:text="${#dates.format(movie.date, 'yyyy/MM/dd')}"></td>
-            <div th:if="${admin}">
+            <th:block th:if="${admin}">
                 <td><input type="button" value="Edit"
                            th:movieId="${movie.movieId}"
                            onclick="onEditClick(this.getAttribute('movieId'));"/>
@@ -26,9 +26,9 @@
                            th:movieName="${movie.name}"
                            onclick="onDeleteClick(this.getAttribute('movieId'), this.getAttribute('movieName'));"/>
                 </td>
-            </div>
+            </th:block>
         </tr>
         </tbody>
     </table>
-</div>
+</th:block>
 </html>

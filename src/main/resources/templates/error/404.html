@@ -5,7 +5,9 @@
         <title>ページが見つかりませんでした</title>
     </head>
     <body>
-        <div th:insert="layout::header"></div>
-        404エラー:お探しのページは見つかりませんでした。
+        <th:block th:insert="layout::header" />
+        <main>
+            404エラー:お探しのページは見つかりませんでした。
+        </main>
     </body>
 </html>

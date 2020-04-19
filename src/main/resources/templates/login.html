@@ -5,34 +5,36 @@
         <title>ういのセトリ - ログインページ</title>
     </head>
     <body>
-        <center>
-            <div th:if="${param.error}">
-                ユーザが登録されていないかパスワードが誤っています。
-            </div>
-            <div th:if="${param.logout}">
-                ログアウトしました。
-            </div>
-            <form th:action="@{/login}" method="post">
-                <table>
-                    <tr>
-                        <th>
-                            ユーザ名
-                        </th>
-                        <td>
-                            <input type="text" name="user">
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>
-                            パスワード
-                        </th>
-                        <td>
-                            <input type="password" name="pass">
-                        </td>
-                    </tr>
-                </table>
-                <input type="submit" value="ログイン">
-            </form>
-        </center>
+        <main>
+            <center>
+                <th:block th:if="${param.error}">
+                    ユーザが登録されていないかパスワードが誤っています。
+                </th:block>
+                <th:block th:if="${param.logout}">
+                    ログアウトしました。
+                </th:block>
+                <form th:action="@{/login}" method="post">
+                    <table>
+                        <tr>
+                            <th>
+                                ユーザ名
+                            </th>
+                            <td>
+                                <input type="text" name="user">
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                パスワード
+                            </th>
+                            <td>
+                                <input type="password" name="pass">
+                            </td>
+                        </tr>
+                    </table>
+                    <input type="submit" value="ログイン">
+                </form>
+            </center>
+        </main>
     </body>
 </html>

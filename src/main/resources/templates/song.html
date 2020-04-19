@@ -5,9 +5,9 @@
         <title>ういのセトリ - お歌一覧</title>
     </head>
     <body>
-        <div th:insert="layout::header"></div>
+        <th:block th:insert="layout::header" />
         <center>
-            <div th:insert="songListFragment::songList(${songs})"></div>
+            <th:block th:insert="songListFragment::songList(${songs})" />
         </center>
     </body>
 </html>

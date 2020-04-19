@@ -7,10 +7,10 @@
             <th>Song Name</th>
             <th>Original Writer/Singer</th>
             <th>Movie Name</th>
-            <div th:if="${admin}">
+            <th:block th:if="${admin}">
                 <th>Edit</th>
                 <th>Delete</th>
-            </div>
+            </th:block>
         </tr>
         </thead>
         <tbody>
@@ -19,7 +19,7 @@
                    th:text="${song.songName}"></a></td>
             <td th:text="${song.writer}"></td>
             <td><a th:href="'/movie/' + ${song.movie.movieId}" th:text="${song.movie.name}"></a></td>
-            <div th:if="${admin}">
+            <th:block th:if="${admin}">
                 <td><input type="button" value="Edit"
                            th:movieId="${song.movie.movieId}"
                            th:songTime="${song.time}"
@@ -31,7 +31,7 @@
                            th:songTime="${song.time}"
                            onclick="onDeleteClick(this.getAttribute('movieId'), this.getAttribute('songTime'), this.getAttribute('songName'));"/>
                 </td>
-            </div>
+            </th:block>
         </tr>
         </tbody>
     </table>
