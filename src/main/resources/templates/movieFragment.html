@@ -8,7 +8,7 @@
                 動画ID
             </th>
             <td>
-                <input type="text" name="movieId" th:value="${defaultId}">
+                <input type="text" name="movieId" required pattern="[0-9a-zA-Z_\-]{11}" th:value="${defaultId}">
             </td>
         </tr>
         <tr>
@@ -16,7 +16,7 @@
                 動画名
             </th>
             <td>
-                <input type="text" name="movieName" th:value="${defaultName}">
+                <input type="text" name="movieName" required th:value="${defaultName}">
             </td>
         </tr>
         <tr>
@@ -24,7 +24,7 @@
                 投稿日/配信日
             </th>
             <td>
-                <input type="date" name="date" id="date" th:value="${defaultDate}">
+                <input type="date" name="date" id="date" required th:value="${defaultDate}">
             </td>
         </tr>
     </table>

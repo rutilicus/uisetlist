@@ -9,7 +9,7 @@
                 動画ID
             </th>
             <td>
-                <input type="text" name="movieId" th:value="${defaultId}">
+                <input type="text" name="movieId" required pattern="[0-9a-zA-Z_\-]{11}" th:value="${defaultId}">
             </td>
         </tr>
         <tr>
@@ -17,7 +17,7 @@
                 再生時間
             </th>
             <td>
-                <input type="number" name="time" th:value="${defaultTime}">
+                <input type="number" name="time" required th:value="${defaultTime}">
             </td>
         </tr>
         <tr>
@@ -25,7 +25,7 @@
                 曲名
             </th>
             <td>
-                <input type="text" name="songName" th:value="${defaultName}">
+                <input type="text" name="songName" required th:value="${defaultName}">
             </td>
         </tr>
         <tr>
@@ -33,7 +33,7 @@
                 アーティスト
             </th>
             <td>
-                <input type="text" name="writer" th:value="${defaultWriter}">
+                <input type="text" name="writer" required th:value="${defaultWriter}">
             </td>
         </tr>
     </table>
