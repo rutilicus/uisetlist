@@ -9,4 +9,5 @@ class UserdataService(private val userdataRepository: UserdataRepository) {
     fun findByUsername(user: String): Userdata {
         return userdataRepository.findByUsername(user)
     }
+    fun findAll(): List<Userdata> = userdataRepository.findAll()
 }

@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8" http-equiv="Content-Type" content="text/html" />
+        <title>データベースダンプの作成に失敗しました</title>
+    </head>
+    <body>
+        <th:block th:insert="layout::header" />
+        <main>
+            <p>データベースダンプの作成に失敗しました。</p>
+            <p th:text="${trace}"></p>
+        </main>
+    </body>
+</html>

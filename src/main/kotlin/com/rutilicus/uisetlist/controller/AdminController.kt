@@ -6,10 +6,16 @@ import com.rutilicus.uisetlist.model.*
 import com.rutilicus.uisetlist.service.MetaTagsService
 import com.rutilicus.uisetlist.service.MovieService
 import com.rutilicus.uisetlist.service.SongService
+import com.rutilicus.uisetlist.service.UserdataService
+import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.util.UriComponentsBuilder
+import java.io.File
+import java.nio.file.Files
 import java.sql.Date
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -18,7 +24,8 @@ import java.util.*
 @RequestMapping("admin")
 class AdminController(val movieService: MovieService,
                       val songService: SongService,
-                      val metaTagsService: MetaTagsService) {
+                      val metaTagsService: MetaTagsService,
+                      val userdataService: UserdataService) {
     @GetMapping("/")
     fun adminPage(model: Model): String {
         return "admin"
@@ -85,6 +92,83 @@ class AdminController(val movieService: MovieService,
         model.addAttribute("defaultWriter", data.writer)
 
         return "editSong"
+    }
+
+    @GetMapping("/databaseDump")
+    fun dbDumpPage(model: Model, builder: UriComponentsBuilder): String {
+        try {
+            // ファイル出力先ディレクトリ作成
+            File("/admin/dbDump").apply {
+                if (!this.exists() && !this.mkdirs()) {
+                    throw Exception("mkdirs Failed.")
+                }
+            }
+
+            // 動画一覧csv出力
+            movieService.findAll().apply {
+                val stringBuilder = StringBuilder()
+                stringBuilder.append("movieid,name,date\n")
+                this.forEach {
+                    stringBuilder.append("${it.movieId},${it.name},${it.date}\n")
+                }
+                Commons.writeFile("/admin/dbDump/movie.csv", stringBuilder.toString())
+            }
+
+            // 歌一覧csv出力
+            songService.findAll().apply {
+                val stringBuilder = StringBuilder()
+                stringBuilder.append("movieid,time,songname,writer\n")
+                this.forEach {
+                    stringBuilder.append("${it.movieId},${it.time},${it.songName},${it.writer}\n")
+                }
+                Commons.writeFile("/admin/dbDump/song.csv", stringBuilder.toString())
+            }
+
+            // ユーザーデータcsv出力
+            userdataService.findAll().apply {
+                val stringBuilder = StringBuilder()
+                stringBuilder.append("username,password\n")
+                this.forEach {
+                    stringBuilder.append("${it.username},${it.password}\n")
+                }
+                Commons.writeFile("/admin/dbDump/userdata.csv", stringBuilder.toString())
+            }
+
+            // metaタグデータcsv出力
+            metaTagsService.findAll().apply {
+                val stringBuilder = StringBuilder()
+                stringBuilder.append("name,content\n")
+                this.forEach {
+                    stringBuilder.append("${it.name},${it.content}\n")
+                }
+                Commons.writeFile("/admin/dbDump/metatags.csv", stringBuilder.toString())
+            }
+
+            // zipファイル生成
+            Commons.zip(
+                    "/admin/dbDump/dbDump.zip",
+                    "/admin/dbDump",
+                    listOf("movie.csv", "song.csv", "userdata.csv", "metatags.csv"))
+        } catch (e: Exception) {
+            model.addAttribute("trace", e.message)
+            return "adminFailDump"
+        }
+
+        return "redirect:" + Commons.getPathUriString(builder, "/admin/dbDump/dbDump.zip")
+    }
+
+    @GetMapping("/dbDump/dbDump.zip")
+    fun getDumpZip(): ResponseEntity<ByteArray> {
+        val header = HttpHeaders()
+        header.add("Content-Type", "text/csv")
+        header.add(
+                "Content-Disposition",
+                "Content-Disposition: attachment; filename=\"dbDump.zip\"")
+        return ResponseEntity(
+                Files.readAllBytes(File("/admin/dbDump/dbDump.zip").toPath()),
+                header,
+                HttpStatus.OK
+        )
     }
 
     @PostMapping("/procAddMovie")

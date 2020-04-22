@@ -1,7 +1,15 @@
 package com.rutilicus.uisetlist
 
 import org.springframework.web.util.UriComponentsBuilder
+import java.io.BufferedWriter
+import java.io.FileOutputStream
+import java.io.FileWriter
+import java.io.PrintWriter
+import java.nio.file.Files
+import java.nio.file.Paths
 import java.util.*
+import java.util.zip.ZipEntry
+import java.util.zip.ZipOutputStream
 
 class Commons {
     companion object {
@@ -21,5 +29,21 @@ class Commons {
                             }
                     )
                 }.build().encode().toUri().toString()
+        fun writeFile(path: String, data: String) {
+            FileWriter(path).apply {
+                this.write(data)
+                this.close()
+            }
+        }
+        fun zip(path: String, basePath:String, files: List<String>) {
+            ZipOutputStream(FileOutputStream(path)).apply {
+                files.forEach {
+                    this.putNextEntry(ZipEntry(it))
+                    Files.copy(Paths.get(basePath, it), this)
+                    this.closeEntry()
+                }
+                this.close()
+            }
+        }
     }
 }
