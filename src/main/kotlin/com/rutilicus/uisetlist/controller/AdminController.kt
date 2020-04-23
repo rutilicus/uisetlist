@@ -109,7 +109,7 @@ class AdminController(val movieService: MovieService,
                 val stringBuilder = StringBuilder()
                 stringBuilder.append("movieid,name,date\n")
                 this.forEach {
-                    stringBuilder.append("${it.movieId},${it.name},${it.date}\n")
+                    stringBuilder.append("\"${it.movieId}\",\"${it.name}\",\"${it.date}\"\n")
                 }
                 Commons.writeFile("/admin/dbDump/movie.csv", stringBuilder.toString())
             }
@@ -119,7 +119,7 @@ class AdminController(val movieService: MovieService,
                 val stringBuilder = StringBuilder()
                 stringBuilder.append("movieid,time,songname,writer\n")
                 this.forEach {
-                    stringBuilder.append("${it.movieId},${it.time},${it.songName},${it.writer}\n")
+                    stringBuilder.append("\"${it.movieId}\",\"${it.time}\",\"${it.songName}\",\"${it.writer}\"\n")
                 }
                 Commons.writeFile("/admin/dbDump/song.csv", stringBuilder.toString())
             }
@@ -129,7 +129,7 @@ class AdminController(val movieService: MovieService,
                 val stringBuilder = StringBuilder()
                 stringBuilder.append("username,password\n")
                 this.forEach {
-                    stringBuilder.append("${it.username},${it.password}\n")
+                    stringBuilder.append("\"${it.username}\",\"${it.password}\"\n")
                 }
                 Commons.writeFile("/admin/dbDump/userdata.csv", stringBuilder.toString())
             }
@@ -139,7 +139,7 @@ class AdminController(val movieService: MovieService,
                 val stringBuilder = StringBuilder()
                 stringBuilder.append("name,content\n")
                 this.forEach {
-                    stringBuilder.append("${it.name},${it.content}\n")
+                    stringBuilder.append("\"${it.name}\",\"${it.content}\"\n")
                 }
                 Commons.writeFile("/admin/dbDump/metatags.csv", stringBuilder.toString())
             }
