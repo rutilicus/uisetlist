@@ -1,10 +1,8 @@
 package com.rutilicus.uisetlist
 
 import org.springframework.web.util.UriComponentsBuilder
-import java.io.BufferedWriter
 import java.io.FileOutputStream
 import java.io.FileWriter
-import java.io.PrintWriter
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.*
