@@ -88,6 +88,7 @@ class AdminController(val movieService: MovieService,
         model.addAttribute("originalTime", time)
         model.addAttribute("defaultId", id)
         model.addAttribute("defaultTime", time)
+        model.addAttribute("defaultEndTime", data.endTime)
         model.addAttribute("defaultName", data.songName)
         model.addAttribute("defaultWriter", data.writer)
 
@@ -119,7 +120,7 @@ class AdminController(val movieService: MovieService,
                 val stringBuilder = StringBuilder()
                 stringBuilder.append("movieid,time,songname,writer\n")
                 this.forEach {
-                    stringBuilder.append("\"${it.movieId}\",\"${it.time}\",\"${it.songName}\",\"${it.writer}\"\n")
+                    stringBuilder.append("\"${it.movieId}\",\"${it.time}\",\"${it.endTime}\",\"${it.songName}\",\"${it.writer}\"\n")
                 }
                 Commons.writeFile("/admin/dbDump/song.csv", stringBuilder.toString())
             }
@@ -214,12 +215,14 @@ class AdminController(val movieService: MovieService,
         val id = form.movieId
         val songName = form.songName
         val time = form.time ?: 0
+        val endTime = form.endTime ?: 0
         val writer = form.writer
 
         val song = Song()
         song.movieId = id
         song.songName = songName
         song.time = time
+        song.endTime = endTime
         song.writer = writer
 
         if (song.movieId.isBlank() || songName.isBlank() || writer.isBlank()) {
@@ -324,6 +327,7 @@ class AdminController(val movieService: MovieService,
 
         song.songName = form.songName
         song.writer = form.writer
+        song.endTime = form.endTime ?: 0
 
         songService.entrySong(song)
 

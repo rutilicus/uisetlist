@@ -9,6 +9,7 @@ CREATE TABLE IF NOT EXISTS song
 (
     movieid varchar(11),
     time integer,
+    endtime integer NOT NULL,
     songname text NOT NULL,
     writer text NOT NULL,
     PRIMARY KEY (movieid, time),
@@ -26,3 +27,5 @@ CREATE TABLE IF NOT EXISTS metatags
     name text PRIMARY KEY,
     content text NOT NULL
 );
+
+ALTER TABLE song ADD COLUMN IF NOT EXISTS endtime integer DEFAULT 0 NOT NULL;

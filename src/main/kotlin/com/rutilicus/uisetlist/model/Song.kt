@@ -20,6 +20,10 @@ class Song {
     @Column(name = "time")
     var time = 0
 
+    @Id
+    @Column(name = "endtime")
+    var endTime = 0
+
     @Column(name = "songname")
     var songName = ""
 

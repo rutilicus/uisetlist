@@ -15,6 +15,14 @@ open class AddSongForm {
         }
 
     @NotNull
+    var endTime : Int? = 0
+        set(value) {
+            if (value != null) {
+                field = value
+            }
+        }
+
+    @NotNull
     var songName = ""
 
     @NotNull

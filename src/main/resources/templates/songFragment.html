@@ -2,7 +2,8 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <header th:fragment="song"
         th:with="defaultId=${defaultId}?:'', defaultTime=${defaultTime}?:'0',
-                 defaultName=${defaultName}?:'', defaultWriter=${defaultWriter}?:''">
+                 defaultName=${defaultName}?:'', defaultWriter=${defaultWriter}?:'',
+                 defaultEndTime=${defaultEndTime}?:'0'">
     <table>
         <tr>
             <th>
@@ -18,6 +19,14 @@
             </th>
             <td>
                 <input type="number" name="time" required th:value="${defaultTime}">
+            </td>
+        </tr>
+        <tr>
+            <th>
+                終了時間
+            </th>
+            <td>
+                <input type="number" name="endTime" required th:value="${defaultEndTime}">
             </td>
         </tr>
         <tr>
