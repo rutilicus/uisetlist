@@ -118,7 +118,7 @@ class AdminController(val movieService: MovieService,
             // 歌一覧csv出力
             songService.findAll().apply {
                 val stringBuilder = StringBuilder()
-                stringBuilder.append("movieid,time,songname,writer\n")
+                stringBuilder.append("movieid,time,endTime,songname,writer\n")
                 this.forEach {
                     stringBuilder.append("\"${it.movieId}\",\"${it.time}\",\"${it.endTime}\",\"${it.songName}\",\"${it.writer}\"\n")
                 }

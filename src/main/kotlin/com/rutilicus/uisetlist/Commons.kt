@@ -1,8 +1,9 @@
 package com.rutilicus.uisetlist
 
 import org.springframework.web.util.UriComponentsBuilder
+import java.io.BufferedWriter
 import java.io.FileOutputStream
-import java.io.FileWriter
+import java.io.OutputStreamWriter
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.*
@@ -28,7 +29,7 @@ class Commons {
                     )
                 }.build().encode().toUri().toString()
         fun writeFile(path: String, data: String) {
-            FileWriter(path).apply {
+            BufferedWriter(OutputStreamWriter(FileOutputStream(path), Charsets.UTF_8.newEncoder())).apply {
                 this.write(data)
                 this.close()
             }
