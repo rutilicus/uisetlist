@@ -117,9 +117,6 @@
                 let currentTime = player.getCurrentTime();
 
                 for (i = 0; i < songInfo.length; i++) {
-                    if (currentTime > songInfo[i].endTime) {
-                        break;
-                    }
                     if (songInfo[i].time <= currentTime && currentTime < songInfo[i].endTime) {
                         startTime = songInfo[i].time;
                         endTime = songInfo[i].endTime;
