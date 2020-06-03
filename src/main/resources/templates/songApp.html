@@ -88,7 +88,8 @@
                     videoId: /*[[${id}]]*/ 'null',
                     events: {
                         'onReady': onPlayerReady,
-                        'onStateChange': onPlayerStateChange
+                        'onStateChange': onPlayerStateChange,
+                        'onPlaybackRateChange': onPlaybackRateChange
                     }
                 });
             }
@@ -161,7 +162,7 @@
             function loop() {
                 if (startTime != -1) {
                     jumpTo(currentMovieId, startTime);
-                    loopTimeoutId = window.setTimeout(loop, (endTime - startTime) * 1000);
+                    loopTimeoutId = window.setTimeout(loop, (endTime - startTime) * 1000 / player.getPlaybackRate());
                 }
             }
 
@@ -177,7 +178,7 @@
                         startTime = songInfo[i].time;
                         endTime = songInfo[i].endTime;
 
-                        loopTimeoutId = window.setTimeout(loop, (endTime - currentTime) * 1000);
+                        loopTimeoutId = window.setTimeout(loop, (endTime - currentTime) * 1000 / player.getPlaybackRate());
                         seekPollingIntervalId = window.setInterval(checkSeek, 1000);
 
                         break;
@@ -189,7 +190,7 @@
                 let currentTime = player.getCurrentTime();
                 if (lastPollingTime != -1) {
                     if (player.getPlayerState() == YT.PlayerState.PLAYING) {
-                        if (Math.abs(currentTime - lastPollingTime - 1) > eps) {
+                        if (Math.abs(currentTime - lastPollingTime - 1 * player.getPlaybackRate()) > eps) {
                             setLooping();
                             return;
                         }
@@ -217,6 +218,12 @@
                     stopLooping();
                 }
             }
+
+            function onPlaybackRateChange() {
+                /* 再生速度変更はループ機能変更同様、ループ設定を変えるだけなのでonLoopFuncChangedに流す */
+                onLoopFuncChanged();
+            }
+
             /*]]>*/
         </script>
     </body>
