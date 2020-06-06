@@ -9,6 +9,9 @@
             .aside { flex: 2; }
             .artist { font-size: small; }
             .movieName { font-size: small; }
+            .controlButtons { text-align: left; display: inline-block; }
+            .songTbl { margin: 0 auto; }
+            .player { text-align: center; }
         </style>
     </head>
     <body>
@@ -16,43 +19,57 @@
         <div class="wrapper">
             <div class="main">
                 <main>
-                    <center>
+                    <div class="player">
                         <div id="player"></div>
                         <br>
-                        <input type="checkbox" id="looping" onclick="onLoopFuncChanged()">
-                        ループ再生
-                    </center>
+                        <fieldset class="controlButtons">
+                            <legend>曲終了後プレーヤー制御</legend>
+                            <p>
+                                <input type="radio" checked id="none" name="playerControl"
+                                       value="none" onclick="onControlFuncChanged()">
+                                <label for="none">制御なし</label>
+                            </p>
+                            <p>
+                                <input type="radio" id="loop" name="playerControl"
+                                       value="loop" onclick="onControlFuncChanged()">
+                                <label for="loop">1曲ループ</label>
+                            </p>
+                            <p>
+                                <input type="radio" id="next" name="playerControl"
+                                       value="next" onclick="onControlFuncChanged()">
+                                <label for="next">次の曲に移動</label>
+                            </p>
+                        </fieldset>
+                    </div>
                 </main>
             </div>
             <div class="aside">
                 <aside>
-                    <center>
-                        <table border="1" id="songTbl">
-                            <thead>
-                            <tr>
-                                <th>
-                                    <div class="songName">Song Name</div>
-                                    <div class="artist">Original Artist</div>
-                                    <div class="movieName">Movie Name</div>
-                                </th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr th:each="song: ${songs}">
-                                <td>
-                                    <a th:href="'javascript: transPage(\'' + ${song.movieId} + '\',' + ${song.time} + ');'"
-                                       th:text="${song.songName}"
-                                       class="songName"></a><br>
-                                    <div th:text="${song.writer}" class="artist"></div>
-                                    <div th:text="${song.movie.name}" class="movieName"></div>
-                                </td>
-                                <td th:text="${song.movieId}" style="display:none" class="movieId"></td>
-                                <td th:text="${song.time}" style="display:none" class="time"></td>
-                                <td th:text="${song.endTime}" style="display:none" class="endTime"></td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </center>
+                    <table border="1" id="songTbl" class="songTbl">
+                        <thead>
+                        <tr>
+                            <th>
+                                <div class="songName">Song Name</div>
+                                <div class="artist">Original Artist</div>
+                                <div class="movieName">Movie Name</div>
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="song: ${songs}">
+                            <td>
+                                <a th:href="'javascript: transPage(\'' + ${song.movieId} + '\',' + ${song.time} + ');'"
+                                   th:text="${song.songName}"
+                                   class="songName"></a><br>
+                                <div th:text="${song.writer}" class="artist"></div>
+                                <div th:text="${song.movie.name}" class="movieName"></div>
+                            </td>
+                            <td th:text="${song.movieId}" style="display:none" class="movieId"></td>
+                            <td th:text="${song.time}" style="display:none" class="time"></td>
+                            <td th:text="${song.endTime}" style="display:none" class="endTime"></td>
+                        </tr>
+                        </tbody>
+                    </table>
                 </aside>
             </div>
         </div>
@@ -94,6 +111,13 @@
                 });
             }
 
+            function onPlayerReady(event) {
+                [#th:block th:if="${time != null}"]
+                event.target.seekTo(/*[[${time}]]*/ 0, true);
+                event.target.playVideo();
+                [/th:block]
+            }
+
             function jumpTo(movieId, time) {
                 if (movieId != currentMovieId) {
                     player.loadVideoById(movieId, time);
@@ -102,12 +126,11 @@
                     player.seekTo(time, true);
                     player.playVideo();
 
-                    if (document.getElementById('looping').checked) {
-                        setLooping();
-                    }
+                    setControl();
                 }
             }
 
+            /* SPA制御関連関数 */
             function transPage(movieId, time) {
                 history.pushState(null, null, '?id=' + movieId + '&time=' + time);
                 jumpTo(movieId, time);
@@ -135,13 +158,7 @@
                 jumpTo(movieId, time);
             }
 
-            function onPlayerReady(event) {
-                [#th:block th:if="${time != null}"]
-                event.target.seekTo(/*[[${time}]]*/ 0, true);
-                event.target.playVideo();
-                [/th:block]
-            }
-
+            /* プレーヤー制御関連関数 */
             const eps = 0.5;
 
             let seekPollingIntervalId;
@@ -151,7 +168,9 @@
             let startTime = -1;
             let endTime = -1;
 
-            function stopLooping() {
+            let playerController = null;
+
+            function stopControl() {
                 window.clearInterval(seekPollingIntervalId);
                 window.clearTimeout(loopTimeoutId);
                 lastPollingTime = -1;
@@ -162,12 +181,29 @@
             function loop() {
                 if (startTime != -1) {
                     jumpTo(currentMovieId, startTime);
-                    loopTimeoutId = window.setTimeout(loop, (endTime - startTime) * 1000 / player.getPlaybackRate());
+                    setControl();
                 }
             }
 
-            function setLooping() {
-                stopLooping();
+            function nextSeek() {
+                if (startTime != -1 && currentMovieId) {
+                    for (let i = 0; i < songInfo.length - 1; i++) {
+                        if (currentMovieId == songInfo[i].movieId &&
+                            startTime == songInfo[i].time) {
+                            jumpTo(songInfo[i + 1].movieId,
+                                   songInfo[i + 1].time);
+                            currentMovieId = songInfo[i + 1].movieId;
+                            startTime = songInfo[i + 1].time;
+                            endTime = songInfo[i + 1].endTime;
+                            setControl();
+                            break;
+                        }
+                    }
+                }
+            }
+
+            function setControl() {
+                stopControl();
 
                 let currentTime = player.getCurrentTime();
 
@@ -178,7 +214,8 @@
                         startTime = songInfo[i].time;
                         endTime = songInfo[i].endTime;
 
-                        loopTimeoutId = window.setTimeout(loop, (endTime - currentTime) * 1000 / player.getPlaybackRate());
+                        loopTimeoutId = window.setTimeout(playerController,
+                                                          (endTime - currentTime) * 1000 / player.getPlaybackRate());
                         seekPollingIntervalId = window.setInterval(checkSeek, 1000);
 
                         break;
@@ -191,7 +228,7 @@
                 if (lastPollingTime != -1) {
                     if (player.getPlayerState() == YT.PlayerState.PLAYING) {
                         if (Math.abs(currentTime - lastPollingTime - 1 * player.getPlaybackRate()) > eps) {
-                            setLooping();
+                            setControl();
                             return;
                         }
                     }
@@ -200,28 +237,46 @@
             }
 
             function onPlayerStateChange(event) {
-                if (document.getElementById('looping').checked) {
-                    if (event.data == YT.PlayerState.PLAYING) {
-                        setLooping();
-                    } else {
-                        stopLooping();
-                    }
+                if (event.data == YT.PlayerState.PLAYING) {
+                    onControlFuncChanged();
                 }
             }
 
-            function onLoopFuncChanged() {
-                if (document.getElementById('looping').checked) {
-                    if (player.getPlayerState() == YT.PlayerState.PLAYING) {
-                        setLooping();
+            function onControlFuncChanged() {
+                let radioElements = document.getElementsByName("playerControl");
+                let select = "none";
+                for (let i = 0; i < radioElements.length; i++) {
+                    if (radioElements[i].checked) {
+                        select = radioElements[i].value;
+                        break;
                     }
+                }
+
+                switch (select) {
+                    case "loop":
+                        playerController = loop;
+                        break;
+
+                    case "next":
+                        playerController = nextSeek;
+                        break;
+
+                    default:
+                        playerController = null;
+                        break;
+                }
+
+                if (playerController != null &&
+                    player.getPlayerState() == YT.PlayerState.PLAYING) {
+                    setControl();
                 } else {
-                    stopLooping();
+                    stopControl();
                 }
             }
 
             function onPlaybackRateChange() {
-                /* 再生速度変更はループ機能変更同様、ループ設定を変えるだけなのでonLoopFuncChangedに流す */
-                onLoopFuncChanged();
+                /* 再生速度変更はループ機能変更同様、ループ設定を変えるだけなのでonControlFuncChangedに流す */
+                onControlFuncChanged();
             }
 
             /*]]>*/
