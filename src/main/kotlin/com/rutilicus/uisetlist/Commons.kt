@@ -2,6 +2,7 @@ package com.rutilicus.uisetlist
 
 import org.springframework.web.util.UriComponentsBuilder
 import java.io.BufferedWriter
+import java.io.ByteArrayOutputStream
 import java.io.FileOutputStream
 import java.io.OutputStreamWriter
 import java.nio.file.Files
@@ -12,6 +13,8 @@ import java.util.zip.ZipOutputStream
 
 class Commons {
     companion object {
+        data class File(val fileName: String, val data: ByteArray)
+
         fun getPathUriString(builder: UriComponentsBuilder, path: String): String =
                 builder.path(path).build().toUri().toString()
         fun getPathUriString(
@@ -43,6 +46,23 @@ class Commons {
                 }
                 this.close()
             }
+        }
+        fun zip(files: List<File>): Optional<ByteArray> {
+            val out = ByteArrayOutputStream()
+            ZipOutputStream(out).apply {
+                files.forEach {
+                    this.putNextEntry(ZipEntry(it.fileName))
+                    try {
+                        this.write(it.data)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        return Optional.empty()
+                    }
+                    this.closeEntry()
+                }
+                this.close()
+            }
+            return Optional.of(out.toByteArray())
         }
     }
 }

@@ -96,66 +96,67 @@ class AdminController(val movieService: MovieService,
     }
 
     @GetMapping("/databaseDump")
-    fun dbDumpPage(model: Model, builder: UriComponentsBuilder): String {
+    @ResponseBody
+    fun dbDumpPage(model: Model, builder: UriComponentsBuilder): ResponseEntity<ByteArray> {
         try {
-            // ファイル出力先ディレクトリ作成
-            File("/admin/dbDump").apply {
-                if (!this.exists() && !this.mkdirs()) {
-                    throw Exception("mkdirs Failed.")
-                }
-            }
+            val files = mutableListOf<Commons.Companion.File>()
 
-            // 動画一覧csv出力
+            // 動画一覧csv生成
             movieService.findAll().apply {
                 val stringBuilder = StringBuilder()
                 stringBuilder.append("movieid,name,date\n")
                 this.forEach {
                     stringBuilder.append("\"${it.movieId}\",\"${it.name}\",\"${it.date}\"\n")
                 }
-                Commons.writeFile("/admin/dbDump/movie.csv", stringBuilder.toString())
+                files.add(Commons.Companion.File("movie.csv", stringBuilder.toString().toByteArray(Charsets.UTF_8)))
             }
 
-            // 歌一覧csv出力
+            // 歌一覧csv生成
             songService.findAll().apply {
                 val stringBuilder = StringBuilder()
                 stringBuilder.append("movieid,time,endTime,songname,writer\n")
                 this.forEach {
                     stringBuilder.append("\"${it.movieId}\",\"${it.time}\",\"${it.endTime}\",\"${it.songName}\",\"${it.writer}\"\n")
                 }
-                Commons.writeFile("/admin/dbDump/song.csv", stringBuilder.toString())
+                files.add(Commons.Companion.File("song.csv", stringBuilder.toString().toByteArray(Charsets.UTF_8)))
             }
 
-            // ユーザーデータcsv出力
+            // ユーザーデータcsv生成
             userdataService.findAll().apply {
                 val stringBuilder = StringBuilder()
                 stringBuilder.append("username,password\n")
                 this.forEach {
                     stringBuilder.append("\"${it.username}\",\"${it.password}\"\n")
                 }
-                Commons.writeFile("/admin/dbDump/userdata.csv", stringBuilder.toString())
+                files.add(Commons.Companion.File("userdata.csv", stringBuilder.toString().toByteArray(Charsets.UTF_8)))
             }
 
-            // metaタグデータcsv出力
+            // metaタグデータcsv生成
             metaTagsService.findAll().apply {
                 val stringBuilder = StringBuilder()
                 stringBuilder.append("name,content\n")
                 this.forEach {
                     stringBuilder.append("\"${it.name}\",\"${it.content}\"\n")
                 }
-                Commons.writeFile("/admin/dbDump/metatags.csv", stringBuilder.toString())
+                files.add(Commons.Companion.File("metatags.csv", stringBuilder.toString().toByteArray(Charsets.UTF_8)))
             }
 
-            // zipファイル生成
-            Commons.zip(
-                    "/admin/dbDump/dbDump.zip",
-                    "/admin/dbDump",
-                    listOf("movie.csv", "song.csv", "userdata.csv", "metatags.csv"))
-        } catch (e: Exception) {
-            model.addAttribute("trace", e.message)
-            return "adminFailDump"
-        }
+            Commons.zip(files).get().let {
+                val headers = HttpHeaders().apply {
+                    this.add("Content-Type", "application/zip")
+                    this.add("Content-Disposition", "attachment; filename=dbDump.zip")
+                }
 
-        return "redirect:" + Commons.getPathUriString(builder, "/admin/dbDump/dbDump.zip")
+                return ResponseEntity(it, headers, HttpStatus.OK)
+            }
+        } catch (e: Exception) {
+            val headers = HttpHeaders().apply {
+                this.add(
+                        "Location",
+                        "/admin/failDbDump?errorContent=$e")
+            }
+            return ResponseEntity(headers, HttpStatus.TEMPORARY_REDIRECT)
+        }
     }
 
     @GetMapping("/dbDump/dbDump.zip")
@@ -170,6 +171,14 @@ class AdminController(val movieService: MovieService,
                 header,
                 HttpStatus.OK
         )
+    }
+
+    @GetMapping("/failDbDump")
+    fun dumpErrorPage(
+            @RequestParam(name = "errorContent", required = false, defaultValue = "") errorContent: String,
+            model: Model): String {
+        model.addAttribute("trace", errorContent)
+        return "adminFailDump"
     }
 
     @PostMapping("/procAddMovie")
