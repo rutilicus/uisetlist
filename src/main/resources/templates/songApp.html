@@ -55,24 +55,27 @@
                             </th>
                         </tr>
                         </thead>
-                        <tbody>
-                        <tr th:each="song: ${songs}">
-                            <td>
-                                <a th:href="'javascript: transPage(\'' + ${song.movieId} + '\',' + ${song.time} + ');'"
-                                   th:text="${song.songName}"
-                                   class="songName"></a><br>
-                                <div th:text="${song.writer}" class="artist"></div>
-                                <div th:text="${song.movie.name}" class="movieName"></div>
-                            </td>
-                            <td th:text="${song.movieId}" style="display:none" class="movieId"></td>
-                            <td th:text="${song.time}" style="display:none" class="time"></td>
-                            <td th:text="${song.endTime}" style="display:none" class="endTime"></td>
-                        </tr>
-                        </tbody>
+                        <th:block th:each="song: ${songs}">
+                            <tbody class="song_elem_container"
+                                 th:data-movieid="${song.movieId}"
+                                 th:data-time="${song.time}"
+                                 th:data-songname="${song.songName}"
+                                 th:data-writer="${song.writer}"
+                                 th:data-moviename="${song.movie.name}"
+                                 th:data-endtime="${song.endTime}"></tbody>
+                        </th:block>
                     </table>
                 </aside>
             </div>
         </div>
+
+        <!-- Load React. -->
+        <script src="https://unpkg.com/react@16/umd/react.production.min.js" crossorigin></script>
+        <script src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js" crossorigin></script>
+
+        <!-- Load our React component. -->
+        <script th:src="@{/js/song_elem.js}"></script>
+
         <script th:inline="javascript">
             /*<![CDATA[*/
             let tag = document.createElement('script');
