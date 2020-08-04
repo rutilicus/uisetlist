@@ -45,26 +45,7 @@
             </div>
             <div class="aside">
                 <aside>
-                    <table border="1" id="songTbl" class="songTbl">
-                        <thead>
-                        <tr>
-                            <th>
-                                <div class="songName">Song Name</div>
-                                <div class="artist">Original Artist</div>
-                                <div class="movieName">Movie Name</div>
-                            </th>
-                        </tr>
-                        </thead>
-                        <th:block th:each="song: ${songs}">
-                            <tbody class="song_elem_container"
-                                 th:data-movieid="${song.movieId}"
-                                 th:data-time="${song.time}"
-                                 th:data-songname="${song.songName}"
-                                 th:data-writer="${song.writer}"
-                                 th:data-moviename="${song.movie.name}"
-                                 th:data-endtime="${song.endTime}"></tbody>
-                        </th:block>
-                    </table>
+                    <div id="allSongList"></div>
                 </aside>
             </div>
         </div>
@@ -75,6 +56,7 @@
 
         <!-- Load our React component. -->
         <script th:src="@{/js/song_elem.js}"></script>
+        <script th:src="@{/js/song_list.js}"></script>
 
         <script th:inline="javascript">
             /*<![CDATA[*/
@@ -85,19 +67,16 @@
 
             let currentMovieId = /*[[${id}]]*/ 'null';
 
-            let songInfo = [];
-
-            /* 歌情報一覧読み込み */
-            var rows = document.getElementById('songTbl').rows;
-            [#th:block th:if="!${songs.isEmpty()}"]
-            for (let i = 1; i < rows.length; i++) {
-                songInfo.push({
-                    movieId: rows[i].getElementsByClassName('movieId')[0].innerText,
-                    time: parseInt(rows[i].getElementsByClassName('time')[0].innerText, 10),
-                    endTime: parseInt(rows[i].getElementsByClassName('endTime')[0].innerText, 10)
-                });
-            }
-            [/th:block]
+            let songInfo = [
+                /*[# th:each="song : ${songs}"]*/
+                {movieId: /*[[${song.movieId}]]*/,
+                 time: /*[[${song.time}]]*/,
+                 songName: /*[[${song.songName}]]*/,
+                 writer: /*[[${song.writer}]]*/,
+                 movieName: /*[[${song.movie.name}]]*/,
+                 endTime: /*[[${song.endTime}]]*/},
+                /*[/]*/
+            ];
 
             /* プレーヤー制御 */
             var player;
@@ -134,9 +113,9 @@
             }
 
             /* SPA制御関連関数 */
-            function transPage(movieId, time) {
-                history.pushState(null, null, '?id=' + movieId + '&time=' + time);
-                jumpTo(movieId, time);
+            function transPage(props) {
+                history.pushState(null, null, '?id=' + props.movieId + '&time=' + props.time);
+                jumpTo(props.movieId, props.time);
             }
 
             window.onpopstate = function(event) {
@@ -281,6 +260,22 @@
                 /* 再生速度変更はループ機能変更同様、ループ設定を変えるだけなのでonControlFuncChangedに流す */
                 onControlFuncChanged();
             }
+
+            /* 歌一覧DOM生成 */
+            let allSongListComponent =
+                ReactDOM.render(
+                    React.createElement(
+                        SongList,
+                        { idName: 'songTbl',
+                          className: 'songTbl' }),
+                document.querySelector("#allSongList")
+            );
+
+            /* リスナ設定 */
+            allSongListComponent.setOnClickListener(transPage);
+
+            /* 歌一覧からリスト子要素を生成 */
+            allSongListComponent.initSongs(songInfo);
 
             /*]]>*/
         </script>
