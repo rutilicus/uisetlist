@@ -11,23 +11,12 @@
             .movieName { font-size: small; }
             .controlButtons { text-align: left; display: inline-block; }
             .songTbl { margin: 0 auto; }
-            #playerArea { text-align: center; }
+            .player { text-align: center; }
         </style>
     </head>
     <body>
         <th:block th:insert="layout::header" />
-        <div class="wrapper">
-            <div class="main">
-                <main>
-                    <div id="playerArea"></div>
-                </main>
-            </div>
-            <div class="aside">
-                <aside>
-                    <div id="allSongList"></div>
-                </aside>
-            </div>
-        </div>
+        <div id="wrapper"></div>
 
         <!-- Load React. -->
         <script src="https://unpkg.com/react@16/umd/react.production.min.js" crossorigin></script>
@@ -35,39 +24,12 @@
 
         <!-- Load our React component. -->
         <script th:src="@{/js/player.js}"></script>
-        <script th:src="@{/js/song_elem.js}"></script>
-        <script th:src="@{/js/song_list.js}"></script>
+        <script th:src="@{/js/songelem.js}"></script>
+        <script th:src="@{/js/songlist.js}"></script>
+        <script th:src="@{/js/songapp.js}"></script>
 
         <script th:inline="javascript">
             /*<![CDATA[*/
-
-            /* プレーヤー制御関連関数 */
-            const eps = 0.5;
-
-            let seekPollingIntervalId;
-            let loopTimeoutId;
-
-            let lastPollingTime = -1;
-            let startTime = -1;
-            let endTime = -1;
-
-            let playerController = null;
-
-            /* YouTube Player関連DOM生成
-               プレーヤー生成関連があるのでここは最初にDOM生成する */
-            ReactDOM.render(
-                React.createElement(
-                    Player,
-                    { control: true }),
-                document.querySelector("#playerArea"));
-
-            let tag = document.createElement('script');
-            tag.src = "https://www.youtube.com/iframe_api";
-            let firstScriptTag = document.getElementsByTagName('script')[0];
-            firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-            let currentMovieId = /*[[${id}]]*/ 'null';
-
             let songInfo = [
                 /*[# th:each="song : ${songs}"]*/
                 {movieId: /*[[${song.movieId}]]*/,
@@ -79,193 +41,17 @@
                 /*[/]*/
             ];
 
-            /* プレーヤー制御 */
-            var player;
-            function onYouTubePlayerAPIReady() {
-                player = new YT.Player('player', {
-                    height: '315',
-                    width: '560',
-                    videoId: /*[[${id}]]*/ 'null',
-                    events: {
-                        'onReady': onPlayerReady,
-                        'onStateChange': onPlayerStateChange,
-                        'onPlaybackRateChange': onPlaybackRateChange
-                    }
-                });
-            }
-
-            function onPlayerReady(event) {
-                [#th:block th:if="${time != null}"]
-                event.target.seekTo(/*[[${time}]]*/ 0, true);
-                event.target.playVideo();
-                [/th:block]
-            }
-
-            function jumpTo(movieId, time) {
-                if (movieId != currentMovieId) {
-                    player.loadVideoById(movieId, time);
-                    currentMovieId = movieId;
-                } else {
-                    player.seekTo(time, true);
-                    player.playVideo();
-
-                    setControl();
-                }
-            }
-
-            /* SPA制御関連関数 */
-            function transPage(props) {
-                history.pushState(null, null, '?id=' + props.movieId + '&time=' + props.time);
-                jumpTo(props.movieId, props.time);
-            }
-
-            window.onpopstate = function(event) {
-                let params = location.search.substr(1).split('&');
-                let movieId = "";
-                let time = 0;
-
-                for (let i = 0; i < params.length; i++) {
-                    let kv = params[i].split('=');
-                    if (kv.length != 2) {
-                        break;
-                    }
-                    switch (kv[0]) {
-                        case 'id':
-                            movieId = kv[1];
-                            break;
-                        case 'time':
-                            time = parseInt(kv[1]) || 0;
-                            break;
-                    }
-                }
-                jumpTo(movieId, time);
-            }
-
-            function stopControl() {
-                window.clearInterval(seekPollingIntervalId);
-                window.clearTimeout(loopTimeoutId);
-                lastPollingTime = -1;
-                startTime = -1;
-                endTime = -1;
-            }
-
-            function loop() {
-                if (startTime != -1) {
-                    jumpTo(currentMovieId, startTime);
-                    setControl();
-                }
-            }
-
-            function nextSeek() {
-                if (startTime != -1 && currentMovieId) {
-                    for (let i = 0; i < songInfo.length - 1; i++) {
-                        if (currentMovieId == songInfo[i].movieId &&
-                            startTime == songInfo[i].time) {
-                            jumpTo(songInfo[i + 1].movieId,
-                                   songInfo[i + 1].time);
-                            currentMovieId = songInfo[i + 1].movieId;
-                            startTime = songInfo[i + 1].time;
-                            endTime = songInfo[i + 1].endTime;
-                            setControl();
-                            break;
-                        }
-                    }
-                }
-            }
-
-            function setControl() {
-                stopControl();
-
-                let currentTime = player.getCurrentTime();
-
-                for (let i = 0; i < songInfo.length; i++) {
-                    if (currentMovieId == songInfo[i].movieId &&
-                        songInfo[i].time <= currentTime &&
-                        currentTime < songInfo[i].endTime) {
-                        startTime = songInfo[i].time;
-                        endTime = songInfo[i].endTime;
-
-                        loopTimeoutId = window.setTimeout(playerController,
-                                                          (endTime - currentTime) * 1000 / player.getPlaybackRate());
-                        seekPollingIntervalId = window.setInterval(checkSeek, 1000);
-
-                        break;
-                    }
-                }
-            }
-
-            function checkSeek() {
-                let currentTime = player.getCurrentTime();
-                if (lastPollingTime != -1) {
-                    if (player.getPlayerState() == YT.PlayerState.PLAYING) {
-                        if (Math.abs(currentTime - lastPollingTime - 1 * player.getPlaybackRate()) > eps) {
-                            setControl();
-                            return;
-                        }
-                    }
-                }
-                lastPollingTime = currentTime;
-            }
-
-            function onPlayerStateChange(event) {
-                if (event.data == YT.PlayerState.PLAYING) {
-                    onControlFuncChanged();
-                }
-            }
-
-            function onControlFuncChanged() {
-                let radioElements = document.getElementsByName("playerControl");
-                let select = "none";
-                for (let i = 0; i < radioElements.length; i++) {
-                    if (radioElements[i].checked) {
-                        select = radioElements[i].value;
-                        break;
-                    }
-                }
-
-                switch (select) {
-                    case "loop":
-                        playerController = loop;
-                        break;
-
-                    case "next":
-                        playerController = nextSeek;
-                        break;
-
-                    default:
-                        playerController = null;
-                        break;
-                }
-
-                if (playerController != null &&
-                    player.getPlayerState() == YT.PlayerState.PLAYING) {
-                    setControl();
-                } else {
-                    stopControl();
-                }
-            }
-
-            function onPlaybackRateChange() {
-                /* 再生速度変更はループ機能変更同様、ループ設定を変えるだけなのでonControlFuncChangedに流す */
-                onControlFuncChanged();
-            }
-
-            /* 歌一覧DOM生成 */
-            let allSongListComponent =
+            /* DOM生成 */
+            let songAppComponent =
                 ReactDOM.render(
                     React.createElement(
-                        SongList,
-                        { idName: 'songTbl',
-                          className: 'songTbl' }),
-                document.querySelector("#allSongList")
+                        SongApp,
+                        {allSongs:songInfo,
+                         defaultId: /*[[${id}]]*/ 'null',
+                         defaultTime: /*[[${time}]]*/ 0}
+                    ),
+                    document.querySelector("#wrapper")
             );
-
-            /* リスナ設定 */
-            allSongListComponent.setOnClickListener(transPage);
-
-            /* 歌一覧からリスト子要素を生成 */
-            allSongListComponent.initSongs(songInfo);
-
             /*]]>*/
         </script>
     </body>

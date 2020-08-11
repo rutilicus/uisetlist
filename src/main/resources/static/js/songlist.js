@@ -7,27 +7,12 @@
 class SongList extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { songs: [] };
-    }
-
-    initSongs(songInfoList) {
-        this.setState( { songs: songInfoList });
-    }
-
-    addSong(songInfo) {
-        let newArr = this.state.songs.slice();
-        newArr.push(songInfo);
-        this.setState({ songs: newArr });
-    }
-
-    setOnClickListener(listener) {
-        this.listener = listener;
     }
 
     render() {
 /*
         return (
-            <table border="1" id={this.props.idName} className={this.props.className}>
+            <table border="1" className="songTbl">
                 <thead>
                     <tr>
                         <th>
@@ -38,32 +23,31 @@ class SongList extends React.Component {
                     </tr>
                 </thead>
                 <tbody>
-                    {this.state.songs.map((song, index) => {
-                        return React.createElement(
-                             SongElem,
-                             Object.assign(song,
-                                           { index: index,
-                                             onClickListener: this.listener })
-                        );})}
+                    {this.props.allSongList[0].list.map((song, index) => {
+                        const props = Object.assign(song,
+                                                    { index: index,
+                                                      onClickListener: this.props.onClickListener });
+                        return <SongElem {...props } />;
+                        })}
                 </tbody>
             </table>
         );
 */
         return React.createElement("table", {
                  border: "1",
-                 id: this.props.idName,
-                 className: this.props.className
+                 className: "songTbl"
                }, React.createElement("thead", null, React.createElement("tr", null, React.createElement("th", null, React.createElement("div", {
                  className: "songName"
                }, "Song Name"), React.createElement("div", {
                  className: "artist"
                }, "Original Artist"), React.createElement("div", {
                  className: "movieName"
-               }, "Movie Name")))), React.createElement("tbody", null, this.state.songs.map((song, index) => {
-                 return React.createElement(SongElem, Object.assign(song, {
+               }, "Movie Name")))), React.createElement("tbody", null, this.props.allSongList[0].list.map((song, index) => {
+                 const props = Object.assign(song, {
                    index: index,
-                   onClickListener: this.listener
-                 }));
+                   onClickListener: this.props.onClickListener
+                 });
+                 return React.createElement(SongElem, props);
                })));
     }
 }
