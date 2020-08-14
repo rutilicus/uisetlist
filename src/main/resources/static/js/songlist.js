@@ -19,7 +19,9 @@ class SongList extends React.Component {
         return (
             <div>
                 {(this.props.mode == "play") &&
-                 (<select className="songListSelect" onChange={this.onChange}>
+                 (<select className="songListSelect"
+                          onChange={this.onChange}
+                          defaultValue={this.props.listIndex}>
                   {this.props.allSongList.map((list, index) => {
                     return <option key={index} value={index}>{list.name}</option>
                   })}
@@ -35,7 +37,7 @@ class SongList extends React.Component {
                         </tr>
                     </thead>
                     <tbody>
-                        {this.props.allSongList[this.props.listIndex].list.map((song, index) => {
+                        {this.props.allSongList[this.props.mode == "play" ? this.props.listIndex : 0].list.map((song, index) => {
                             const props = Object.assign(song,
                                                         { key: index,
                                                           index: index,
@@ -51,7 +53,8 @@ class SongList extends React.Component {
 */
         return React.createElement("div", null, this.props.mode == "play" && React.createElement("select", {
                  className: "songListSelect",
-                 onChange: this.onChange
+                 onChange: this.onChange,
+                 defaultValue: this.props.listIndex
                }, this.props.allSongList.map((list, index) => {
                  return React.createElement("option", {
                    key: index,
@@ -66,7 +69,7 @@ class SongList extends React.Component {
                  className: "artist"
                }, "Original Artist"), React.createElement("div", {
                  className: "movieName"
-               }, "Movie Name")))), React.createElement("tbody", null, this.props.allSongList[this.props.listIndex].list.map((song, index) => {
+               }, "Movie Name")))), React.createElement("tbody", null, this.props.allSongList[this.props.mode == "play" ? this.props.listIndex : 0].list.map((song, index) => {
                  const props = Object.assign(song, {
                    key: index,
                    index: index,

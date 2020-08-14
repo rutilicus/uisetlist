@@ -79,14 +79,18 @@ class SongApp extends React.Component {
     setControl() {
         this.stopControl();
 
-        const currentSong = this.state.allSongList[this.state.listIndex].list[this.songIndex];
-        const currentTime = this.player.getCurrentTime();
+        const currentList = this.state.allSongList[this.state.listIndex].list;
 
-        this.lastPollingTime = currentTime;
-        this.loopTimeoutId =
-            window.setTimeout(this.playerController,
-                              (currentSong.endTime - currentTime) * 1000 / this.player.getPlaybackRate());
-        this.seekPollingIntervalId = window.setInterval(this.checkSeek, 1000);
+        if (0 <= this.songIndex && this.songIndex < currentList.length) {
+            const currentSong = currentList[this.songIndex];
+            const currentTime = this.player.getCurrentTime();
+
+            this.lastPollingTime = currentTime;
+            this.loopTimeoutId =
+                window.setTimeout(this.playerController,
+                                  (currentSong.endTime - currentTime) * 1000 / this.player.getPlaybackRate());
+            this.seekPollingIntervalId = window.setInterval(this.checkSeek, 1000);
+        }
     }
 
     stopControl() {
