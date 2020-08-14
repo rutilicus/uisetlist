@@ -16,9 +16,11 @@ class SongElem extends React.Component {
             <tr>
                 <td>
                     <div>
-                        <a href="#" onClick={this.handleClick} className="songName">
+                        {this.props.linkEnable &&
+                         <a href="#" onClick={this.handleClick} className="songName">
                             {this.props.songName}
-                        </a>
+                         </a>}
+                        {!this.props.linkEnable && this.props.songName}
                     </div>
                     <div className="artist">
                         {this.props.writer}
@@ -26,18 +28,31 @@ class SongElem extends React.Component {
                     <div className="movieName">
                         {this.props.movieName}
                     </div>
+                    {this.props.buttonList.map((button, index) => {
+                        return <button key={index}
+                                       type="button"
+                                       onClick={(e) => button.onClick(this.props.index)}>
+                            {button.text}
+                        </button>;
+                    })}
                 </td>
             </tr>
         );
 */
-        return React.createElement("tr", null, React.createElement("td", null, React.createElement("div", null, React.createElement("a", {
+        return React.createElement("tr", null, React.createElement("td", null, React.createElement("div", null, this.props.linkEnable && React.createElement("a", {
                  href: "#",
                  onClick: this.handleClick,
                  className: "songName"
-               }, this.props.songName)), React.createElement("div", {
+               }, this.props.songName), !this.props.linkEnable && this.props.songName), React.createElement("div", {
                  className: "artist"
                }, this.props.writer), React.createElement("div", {
                  className: "movieName"
-               }, this.props.movieName)));
+               }, this.props.movieName), this.props.buttonList.map((button, index) => {
+                 return React.createElement("button", {
+                   key: index,
+                   type: "button",
+                   onClick: e => button.onClick(this.props.index)
+                 }, button.text);
+               })));
     }
 }

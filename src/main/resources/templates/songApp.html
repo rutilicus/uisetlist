@@ -5,13 +5,17 @@
         <title>ういのセトリ - お歌一覧</title>
         <style>
             .wrapper { display: flex; }
-            .main { flex: 1; position: sticky; top: 0px; align-self: baseline; }
+            .mainSticky { flex: 1; position: sticky; top: 0px; align-self: baseline; }
+            .mainNonSticky { flex: 1; top: 0px; align-self: baseline; }
             .aside { flex: 2; }
             .artist { font-size: small; }
             .movieName { font-size: small; }
             .controlButtons { text-align: left; display: inline-block; }
             .songTbl { margin: 0 auto; }
             .player { text-align: center; }
+            .songListSelect { margin-left: auto; margin-right: auto; display: block; }
+            .modeTbl { margin: 0 auto; }
+            .listNameEdit { text-align: center; }
         </style>
     </head>
     <body>
@@ -26,6 +30,7 @@
         <script th:src="@{/js/player.js}"></script>
         <script th:src="@{/js/songelem.js}"></script>
         <script th:src="@{/js/songlist.js}"></script>
+        <script th:src="@{/js/editlist.js}"></script>
         <script th:src="@{/js/songapp.js}"></script>
 
         <script th:inline="javascript">

@@ -3,7 +3,6 @@
 class Player extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { control: this.props.control };
         this.loadVideo = this.loadVideo.bind(this);
         this.onPlayerReady = this.onPlayerReady.bind(this);
         this.onPlayerStateChange = this.onPlayerStateChange.bind(this);
@@ -48,8 +47,11 @@ class Player extends React.Component {
     }
 
     onPlayerStateChange(event) {
-        if (event.data == YT.PlayerState.PLAYING) {
-            this.onControlFuncChanged();
+        switch(event.data) {
+            case YT.PlayerState.PLAYING:
+            case YT.PlayerState.PAUSED:
+                this.onControlFuncChanged();
+                break;
         }
     }
 
@@ -76,7 +78,7 @@ class Player extends React.Component {
                 break;
 
             default:
-                this.props.setPlayerController(this.null);
+                this.props.setPlayerController(null);
                 break;
         }
 
@@ -94,33 +96,20 @@ class Player extends React.Component {
     }
 
     loop() {
-        const timeData = this.props.getTime();
-        if (timeData.startTime != -1) {
-            this.props.jumpTo(this.props.getCurrentMovieId(), timeData.startTime);
-            this.props.setControl();
-        }
+        this.props.jumpTo(this.props.getSongIndex());
     }
 
     nextSeek() {
-        const timeData = this.props.getTime();
-        const songList = this.props.getCurrentSongList()
-        const currentMovieId = this.props.getCurrentMovieId();
-        if (timeData.startTime != -1 && currentMovieId) {
-            for (let i = 0; i < songList.length - 1; i++) {
-                if (currentMovieId == songList[i].movieId &&
-                    timeData.startTime == songList[i].time) {
-                    this.props.jumpTo(songList[i + 1].movieId,
-                                      songList[i + 1].time);
-                    this.props.setCurrentMovieId(songList[i + 1].movieId);
-                    this.props.setTime({
-                        startTime: songList[i + 1].time,
-                        endTime: songList[i + 1].endTime
-                    })
-                    this.props.setControl();
-                    break;
-                }
-            }
+        const currentIndex = this.props.getSongIndex();
+        const songList = this.props.getCurrentSongList();
+
+        if (currentIndex < songList.length - 1) {
+            this.props.jumpTo(currentIndex + 1);
         }
+    }
+
+    setAllSongList(newList) {
+        this.setState({allSongList: newList});
     }
 
     render() {
@@ -128,7 +117,7 @@ class Player extends React.Component {
         return(
             <div className="player">
                 <div id="player"></div>
-                {this.state.control &&
+                {this.props.control &&
                     <fieldset className="controlButtons">
                         <legend>曲終了後プレーヤー制御</legend>
                         <p>
@@ -156,7 +145,7 @@ class Player extends React.Component {
                  className: "player"
                }, React.createElement("div", {
                  id: "player"
-               }), this.state.control && React.createElement("fieldset", {
+               }), this.props.control && React.createElement("fieldset", {
                  className: "controlButtons"
                }, React.createElement("legend", null, "\u66F2\u7D42\u4E86\u5F8C\u30D7\u30EC\u30FC\u30E4\u30FC\u5236\u5FA1"), React.createElement("p", null, React.createElement("input", {
                  type: "radio",

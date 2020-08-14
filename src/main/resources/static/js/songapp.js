@@ -1,15 +1,23 @@
 'use strict';
 
 /*
- * dependencies: player.js, songelem.js, songlist.js
+ * dependencies: player.js, songelem.js, songlist.js, editlist.js
  */
+
+const storageKey = "allSongList";
 
 class SongApp extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            allSongList: [{name: "全曲一覧", list: this.props.allSongs}]
+            allSongList:
+                [{name: "全曲一覧", list: this.props.allSongs}].concat(
+                    JSON.parse(localStorage[storageKey] || "[]")
+                ),
+            mode: "play",
+            listIndex: 0,
+            editIndex: 1
         };
 
         this.jumpTo = this.jumpTo.bind(this);
@@ -17,16 +25,24 @@ class SongApp extends React.Component {
         this.setPlayerInstance = this.setPlayerInstance.bind(this);
         this.getPlayerInstance = this.getPlayerInstance.bind(this);
         this.onPopState = this.onPopState.bind(this);
-        this.setTime = this.setTime.bind(this);
-        this.getTime = this.getTime.bind(this);
         this.setControl = this.setControl.bind(this);
         this.stopControl = this.stopControl.bind(this);
         this.getCurrentSongList = this.getCurrentSongList.bind(this);
-        this.getCurrentMovieId = this.getCurrentMovieId.bind(this);
-        this.setCurrentMovieId = this.setCurrentMovieId.bind(this);
         this.getPlayerController = this.getPlayerController.bind(this);
         this.setPlayerController = this.setPlayerController.bind(this);
         this.checkSeek = this.checkSeek.bind(this);
+        this.setListIndex = this.setListIndex.bind(this);
+        this.getSongIndex = this.getSongIndex.bind(this);
+        this.changeMode = this.changeMode.bind(this);
+        this.addNewSongList = this.addNewSongList.bind(this);
+        this.addSong2CurrentEditList = this.addSong2CurrentEditList.bind(this);
+        this.setEditIndex = this.setEditIndex.bind(this);
+        this.setSticky = this.setSticky.bind(this);
+        this.setCurrentListName = this.setCurrentListName.bind(this);
+        this.removeCurrentSongList = this.removeCurrentSongList.bind(this);
+        this.swapUp = this.swapUp.bind(this);
+        this.swapDown = this.swapDown.bind(this);
+        this.removeSongFromCurrentEditList = this.removeSongFromCurrentEditList.bind(this);
 
         window.onpopstate = this.onPopState;
 
@@ -36,58 +52,52 @@ class SongApp extends React.Component {
         this.loopTimeoutId = null;
 
         this.lastPollingTime = -1;
-        this.startTime = -1;
-        this.endTime = -1;
 
-        this.currentMovieId = this.props.defaultId;
+        this.songIndex = -1;
 
         this.playerController = null;
     }
 
-    jumpTo(movieId, time) {
-        if (movieId != this.currentMovieId) {
-            this.player.loadVideoById(movieId, time);
-            this.currentMovieId = movieId;
-        } else {
-            this.player.seekTo(time, true);
-            this.player.playVideo();
+    jumpTo(index) {
+        const currentList = this.state.allSongList[this.state.listIndex].list;
+        const currentIndex = this.songIndex;
+        this.songIndex = index;
+        this.stopControl();
 
-            this.setControl();
+        if (0 <= index && index < currentList.length) {
+            if (currentIndex == -1 ||
+                currentList[currentIndex].movieId != currentList[index].movieId) {
+                this.player.loadVideoById(currentList[index].movieId, currentList[index].time);
+            } else {
+                this.player.seekTo(currentList[index].time, true);
+                this.player.playVideo();
+                this.setControl();
+            }
         }
     }
 
     setControl() {
         this.stopControl();
 
+        const currentSong = this.state.allSongList[this.state.listIndex].list[this.songIndex];
         const currentTime = this.player.getCurrentTime();
 
-        for (let i = 0; i < this.state.allSongList[0].list.length; i++) {
-            if (this.currentMovieId == this.state.allSongList[0].list[i].movieId &&
-                this.state.allSongList[0].list[i].time <= currentTime &&
-                currentTime < this.state.allSongList[0].list[i].endTime) {
-                this.startTime = this.state.allSongList[0].list[i].time;
-                this.endTime = this.state.allSongList[0].list[i].endTime;
-
-                this.loopTimeoutId = window.setTimeout(this.playerController,
-                                                  (this.endTime - currentTime) * 1000 / this.player.getPlaybackRate());
-                this.seekPollingIntervalId = window.setInterval(this.checkSeek, 1000);
-
-                break;
-            }
-        }
+        this.lastPollingTime = currentTime;
+        this.loopTimeoutId =
+            window.setTimeout(this.playerController,
+                              (currentSong.endTime - currentTime) * 1000 / this.player.getPlaybackRate());
+        this.seekPollingIntervalId = window.setInterval(this.checkSeek, 1000);
     }
 
     stopControl() {
         window.clearInterval(this.seekPollingIntervalId);
         window.clearTimeout(this.loopTimeoutId);
         this.lastPollingTime = -1;
-        this.startTime = -1;
-        this.endTime = -1;
     }
 
     transPage(props) {
-        history.pushState(null, null, '?id=' + props.movieId + '&time=' + props.time);
-        this.jumpTo(props.movieId, props.time);
+        history.pushState(null, null, '?id=' + props.movieId + '&time=' + props.time + '&index=' + props.index);
+        this.jumpTo(props.index);
     }
 
     setPlayerInstance(player) {
@@ -98,62 +108,35 @@ class SongApp extends React.Component {
         return this.player
     }
 
-    renderSongList() {
-        this.allSongListComponent = React.createElement(SongList, {
-            allSongList: this.state.allSongList,
-            onClickListener: this.transPage
-        });
-        return this.allSongListComponent;
-    }
-
     onPopState(event) {
         let params = location.search.substr(1).split('&');
-        let movieId = "";
-        let time = 0;
+        let index = -1;
+        let mode = "play";
 
         for (let i = 0; i < params.length; i++) {
             let kv = params[i].split('=');
             if (kv.length != 2) {
                 break;
             }
-            switch (kv[0]) {
-                case 'id':
-                    movieId = kv[1];
+            switch(kv[0]) {
+                case "index":
+                    index = parseInt(kv[1], 10);
+                    if (isNaN(index)) {
+                        index = -1;
+                    }
                     break;
-                case 'time':
-                    time = parseInt(kv[1]) || 0;
+                case "mode":
+                    mode = kv[1];
+                    this.setState({editIndex: 1});
+                    if (mode == "play") {
+                        this.stopControl();
+                    }
+                    this.setSticky(mode);
                     break;
             }
         }
-        this.jumpTo(movieId, time);
-    }
-
-    setTime(timeData) {
-        if ("lastPollingTime" in timeData) {
-            this.lastPollingTime = timeData.lastPollingTime;
-        }
-        if ("startTime" in timeData) {
-            this.startTime = timeData.startTime;
-        }
-        if ("endTime" in timeData) {
-            this.endTime = timeData.endTime;
-        }
-    }
-
-    getTime() {
-        return {
-            lastPollingTime: this.lastPollingTime,
-            startTime: this.startTime,
-            endTime: this.endTime
-        };
-    }
-
-    getCurrentMovieId() {
-        return this.currentMovieId;
-    }
-
-    setCurrentMovieId(movieId) {
-        this.currentMovieId = movieId;
+        this.setState({mode: mode});
+        this.jumpTo(index);
     }
 
     getPlayerController() {
@@ -180,35 +163,163 @@ class SongApp extends React.Component {
     }
 
     getCurrentSongList() {
-        return this.state.allSongList[0].list;
+        return this.state.allSongList[this.state.listIndex].list;
+    }
+
+    setListIndex(index) {
+        this.setState({listIndex: index});
+        this.stopControl();
+    }
+
+    getSongIndex() {
+        return this.songIndex;
+    }
+
+    changeMode(event, mode) {
+        event.preventDefault();
+        history.pushState(null, null, "?mode=" + mode);
+        this.setState({mode: mode});
+        this.setSticky(mode);
+    }
+
+    addNewSongList(newList) {
+        let tmp = this.state.allSongList.slice();
+        tmp.push(newList);
+        this.setState({allSongList: tmp});
+        localStorage[storageKey] = JSON.stringify(tmp.slice(1));
+    }
+
+    addSong2CurrentEditList(index) {
+        const editIndex = this.state.editIndex;
+        let tmp = this.state.allSongList.slice();
+        if (0 < editIndex && editIndex < tmp.length) {
+            tmp[this.state.editIndex].list.push(this.state.allSongList[0].list[index]);
+            this.setState({allSongList: tmp});
+            localStorage[storageKey] = JSON.stringify(tmp.slice(1));
+        }
+    }
+
+    setEditIndex(index) {
+        this.setState({editIndex: index});
+    }
+
+    setSticky(mode) {
+        const main = document.getElementById("main");
+        switch(mode) {
+            case "play":
+                // mainにposition: sticky付与
+                main.className = "mainSticky";
+                break;
+            case "edit":
+                // mainのposition: sticky削除
+                main.className = "mainNonSticky";
+                break;
+        }
+    }
+
+    setCurrentListName(newName) {
+        let tmp = this.state.allSongList.slice();
+        const currentIndex = this.state.editIndex;
+        if (0 < currentIndex && currentIndex < tmp.length) {
+            tmp[currentIndex].name = newName;
+            this.setState({allSongList: tmp});
+            localStorage[storageKey] = JSON.stringify(tmp.slice(1));
+        }
+    }
+
+    removeCurrentSongList() {
+        const index = this.state.editIndex;
+        if (0 < index && index < this.state.allSongList.length) {
+            let tmp = this.state.allSongList.slice();
+            tmp.splice(index, 1);
+            const currentIndex = this.state.editIndex;
+            this.setState({allSongList: tmp, editIndex: currentIndex - 1});
+            localStorage[storageKey] = JSON.stringify(tmp.slice(1));
+        }
+    }
+
+    swapUp(index) {
+        let tmp = this.state.allSongList.slice();
+        const currentIndex = this.state.editIndex;
+        if (0 < currentIndex && currentIndex < tmp.length
+            && 0 < index && index < tmp[currentIndex].list.length) {
+            const tmpElem = tmp[currentIndex].list[index - 1];
+            tmp[currentIndex].list[index - 1] = tmp[currentIndex].list[index];
+            tmp[currentIndex].list[index] = tmpElem;
+            this.setState({allSongList: tmp});
+            localStorage[storageKey] = JSON.stringify(tmp.slice(1));
+        }
+    }
+
+    swapDown(index) {
+        let tmp = this.state.allSongList.slice();
+        const currentIndex = this.state.editIndex;
+        if (0 < currentIndex && currentIndex < tmp.length
+            && 0 <= index && index < tmp[currentIndex].list.length - 1) {
+            const tmpElem = tmp[currentIndex].list[index + 1];
+            tmp[currentIndex].list[index + 1] = tmp[currentIndex].list[index];
+            tmp[currentIndex].list[index] = tmpElem;
+            this.setState({allSongList: tmp});
+            localStorage[storageKey] = JSON.stringify(tmp.slice(1));
+        }
+    }
+
+    removeSongFromCurrentEditList(index) {
+        let tmp = this.state.allSongList.slice();
+        const currentIndex = this.state.editIndex;
+        if (0 < currentIndex && currentIndex < tmp.length
+            && 0 <= index && index < tmp[currentIndex].list.length) {
+            tmp[currentIndex].list.splice(index, 1);
+            this.setState({allSongList: tmp});
+            localStorage[storageKey] = JSON.stringify(tmp.slice(1));
+        }
     }
 
     render() {
 /*
         return (
             <div className="wrapper">
-                <div className="main">
+                <div className="mainSticky" id="main">
                     <main>
-                        {<Player control="true"
+                        {<Player control={this.state.mode=="play"}
                                  setInstance={this.setPlayerInstance}
                                  getInstance={this.getPlayerInstance}
                                  defaultId={this.props.defaultId}
                                  defaultTime={this.props.defaultTime}
                                  jumpTo={this.jumpTo}
-                                 setTime={this.setTime}
-                                 getTime={this.getTime}
                                  setControl={this.setControl}
                                  stopControl={this.stopControl}
-                                 getCurrentMovieId={this.getCurrentMovieId}
-                                 setCurrentMovieId={this.setCurrentMovieId}
-                                 getPlayerController={this.getPlayerController}
                                  setPlayerController={this.setPlayerController}
-                                 getCurrentSongList={this.getCurrentSongList} />}
+                                 getCurrentSongList={this.getCurrentSongList}
+                                 getSongIndex={this.getSongIndex} />}
+                        {this.state.mode == "edit" &&
+                         <EditList addNewSongList={this.addNewSongList}
+                                   allSongList={this.state.allSongList}
+                                   editIndex={this.state.editIndex}
+                                   setEditIndex={this.setEditIndex}
+                                   setCurrentListName={this.setCurrentListName}
+                                   removeCurrentSongList={this.removeCurrentSongList}
+                                   swapUp={this.swapUp}
+                                   swapDown={this.swapDown}
+                                   removeSongFromCurrentEditList={this.removeSongFromCurrentEditList} />}
                     </main>
                 </div>
                 <div className="aside">
                     <aside>
-                        {this.renderSongList()}
+                        <table cellPadding="15" className="modeTbl">
+                            <thead>
+                                <tr>
+                                    <td><a href="#" onClick={(e) => this.changeMode(e, "play")}>リスト再生</a></td>
+                                    <td><a href="#" onClick={(e) => this.changeMode(e, "edit")}>リスト編集</a></td>
+                                </tr>
+                            </thead>
+                        </table>
+                        {<SongList allSongList={this.state.allSongList}
+                                   listIndex={this.state.listIndex}
+                                   onClickListener={this.transPage}
+                                   mode={this.state.mode}
+                                   setListIndex={this.setListIndex}
+                                   addSong={this.addSong2CurrentEditList} />}
                     </aside>
                 </div>
             </div>
@@ -217,25 +328,48 @@ class SongApp extends React.Component {
         return React.createElement("div", {
                  className: "wrapper"
                }, React.createElement("div", {
-                 className: "main"
+                 className: "mainSticky",
+                 id: "main"
                }, React.createElement("main", null, React.createElement(Player, {
-                 control: "true",
+                 control: this.state.mode == "play",
                  setInstance: this.setPlayerInstance,
                  getInstance: this.getPlayerInstance,
                  defaultId: this.props.defaultId,
                  defaultTime: this.props.defaultTime,
                  jumpTo: this.jumpTo,
-                 setTime: this.setTime,
-                 getTime: this.getTime,
                  setControl: this.setControl,
                  stopControl: this.stopControl,
-                 getCurrentMovieId: this.getCurrentMovieId,
-                 setCurrentMovieId: this.setCurrentMovieId,
-                 getPlayerController: this.getPlayerController,
                  setPlayerController: this.setPlayerController,
-                 getCurrentSongList: this.getCurrentSongList
+                 getCurrentSongList: this.getCurrentSongList,
+                 getSongIndex: this.getSongIndex
+               }), this.state.mode == "edit" && React.createElement(EditList, {
+                 addNewSongList: this.addNewSongList,
+                 allSongList: this.state.allSongList,
+                 editIndex: this.state.editIndex,
+                 setEditIndex: this.setEditIndex,
+                 setCurrentListName: this.setCurrentListName,
+                 removeCurrentSongList: this.removeCurrentSongList,
+                 swapUp: this.swapUp,
+                 swapDown: this.swapDown,
+                 removeSongFromCurrentEditList: this.removeSongFromCurrentEditList
                }))), React.createElement("div", {
                  className: "aside"
-               }, React.createElement("aside", null, this.renderSongList())));
+               }, React.createElement("aside", null, React.createElement("table", {
+                 cellPadding: "15",
+                 className: "modeTbl"
+               }, React.createElement("thead", null, React.createElement("tr", null, React.createElement("td", null, React.createElement("a", {
+                 href: "#",
+                 onClick: e => this.changeMode(e, "play")
+               }, "\u30EA\u30B9\u30C8\u518D\u751F")), React.createElement("td", null, React.createElement("a", {
+                 href: "#",
+                 onClick: e => this.changeMode(e, "edit")
+               }, "\u30EA\u30B9\u30C8\u7DE8\u96C6"))))), React.createElement(SongList, {
+                 allSongList: this.state.allSongList,
+                 listIndex: this.state.listIndex,
+                 onClickListener: this.transPage,
+                 mode: this.state.mode,
+                 setListIndex: this.setListIndex,
+                 addSong: this.addSong2CurrentEditList
+               }))));
     }
 }
