@@ -10,4 +10,5 @@ class UserdataService(private val userdataRepository: UserdataRepository) {
         return userdataRepository.findByUsername(user)
     }
     fun findAll(): List<Userdata> = userdataRepository.findAll()
+    fun addUser(user: Userdata): Userdata = userdataRepository.saveAndFlush(user)
 }

@@ -6,8 +6,9 @@ The application's name comes from [Hinano Ui](https://www.youtube.com/channel/UC
 
 # How to use
 1. Create a Heroku Web Application with Heroku Postgres.
-2. Deploy this application and run.
-3. Insert admin user name and password salted and hashed with bcrypt into the userdata table manually.
-4. Access (application root)/admin and login.
-5. Add video and song data.
-6. Enjoy!
+1. Add environment variables INIT_USER_NAME and INIT_USER_PASS for admin user name and password.
+1. Deploy this application and run.
+1. Access (application root)/initUser for creating admin user.
+1. Access (application root)/admin and login.
+1. Add video and song data.
+1. Enjoy!

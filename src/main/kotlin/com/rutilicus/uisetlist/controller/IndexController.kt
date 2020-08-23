@@ -28,4 +28,9 @@ class IndexController(val movieService: MovieService, val metaTagsService: MetaT
     fun admin(builder: UriComponentsBuilder): String {
         return "redirect:" + Commons.getPathUriString(builder, "/admin/")
     }
+
+    @GetMapping("/initUser")
+    fun initUser(builder: UriComponentsBuilder): String {
+        return "redirect:" + Commons.getPathUriString(builder, "/initUser/")
+    }
 }

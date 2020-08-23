@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" http-equiv="Content-Type" content="text/html" />
+    <title>ういのセトリ - 管理ユーザ初期設定</title>
+</head>
+<body>
+    <th:block th:insert="layout::header" />
+    <p>
+        <th:block th:if="${success}">
+            管理ユーザの設定を行いました。
+        </th:block>
+        <th:block th:unless="${success}">
+            管理ユーザの設定に失敗しました。
+        </th:block>
+    </p>
+</body>
+</html>
