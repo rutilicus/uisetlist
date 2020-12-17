@@ -3,6 +3,8 @@
 class Player extends React.Component {
     constructor(props) {
         super(props);
+        this.state = {playerWidth: 560, playerHeight: 315};
+
         this.loadVideo = this.loadVideo.bind(this);
         this.onPlayerReady = this.onPlayerReady.bind(this);
         this.onPlayerStateChange = this.onPlayerStateChange.bind(this);
@@ -10,6 +12,7 @@ class Player extends React.Component {
         this.onPlaybackRateChange = this.onPlaybackRateChange.bind(this);
         this.loop = this.loop.bind(this);
         this.nextSeek = this.nextSeek.bind(this);
+        this.resizePlayer = this.resizePlayer.bind(this);
     }
 
     componentDidMount() {
@@ -112,11 +115,33 @@ class Player extends React.Component {
         this.setState({allSongList: newList});
     }
 
+    resizePlayer() {
+        this.props.getInstance().setSize(this.state.playerWidth,
+                                         this.state.playerHeight);
+    }
+
     render() {
 /*
         return(
             <div className="player">
                 <div id="player"></div>
+                <br />
+                <label>
+                    プレーヤーサイズ
+                    <input type="number"
+                           id="playerWidth"
+                           size="6"
+                           value={this.state.playerWidth}
+                           onChange={(e) => this.setState({playerWidth: event.target.value})} />
+                    x
+                    <input type="number"
+                           id="playerHeight"
+                           size="6"
+                           value={this.state.playerHeight}
+                           onChange={(e) => this.setState({playerHeight: event.target.value})} />
+                    <button type="button" onClick={this.resizePlayer}>反映</button>
+                </label>
+                <br />
                 {this.props.control &&
                     <fieldset className="controlButtons">
                         <legend>曲終了後プレーヤー制御</legend>
@@ -145,7 +170,26 @@ class Player extends React.Component {
                  className: "player"
                }, React.createElement("div", {
                  id: "player"
-               }), this.props.control && React.createElement("fieldset", {
+               }), React.createElement("br", null), React.createElement("label", null, "\u30D7\u30EC\u30FC\u30E4\u30FC\u30B5\u30A4\u30BA", React.createElement("input", {
+                 type: "number",
+                 id: "playerWidth",
+                 size: "6",
+                 value: this.state.playerWidth,
+                 onChange: e => this.setState({
+                   playerWidth: event.target.value
+                 })
+               }), "x", React.createElement("input", {
+                 type: "number",
+                 id: "playerHeight",
+                 size: "6",
+                 value: this.state.playerHeight,
+                 onChange: e => this.setState({
+                   playerHeight: event.target.value
+                 })
+               }), React.createElement("button", {
+                 type: "button",
+                 onClick: this.resizePlayer
+               }, "\u53CD\u6620")), React.createElement("br", null), this.props.control && React.createElement("fieldset", {
                  className: "controlButtons"
                }, React.createElement("legend", null, "\u66F2\u7D42\u4E86\u5F8C\u30D7\u30EC\u30FC\u30E4\u30FC\u5236\u5FA1"), React.createElement("p", null, React.createElement("input", {
                  type: "radio",

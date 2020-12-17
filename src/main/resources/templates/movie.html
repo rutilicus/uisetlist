@@ -10,6 +10,14 @@
             <center>
                 <div id="player"></div>
                 <br>
+                <label>
+                    プレーヤーサイズ
+                    <input type="number" id="playerWidth" size="6" value="560" />
+                    x
+                    <input type="number" id="playerHeight" size="6" value="315" />
+                    <button type="button" onClick="resizePlayer()">反映</button>
+                </label>
+                <br />
                 <label th:if="!${songs.isEmpty()}">
                     <input type="checkbox" id="looping" onclick="onLoopFuncChanged()">
                     ループ再生
@@ -160,6 +168,12 @@
                 } else {
                     stopLooping();
                 }
+            }
+
+            function resizePlayer() {
+                let width = parseInt(document.getElementById('playerWidth').value, 10) || 0;
+                let height = parseInt(document.getElementById('playerHeight').value, 10) || 0;
+                player.setSize(width, height);
             }
             /*]]>*/
         </script>
