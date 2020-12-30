@@ -280,7 +280,6 @@ class SongApp extends React.Component {
     }
 
     render() {
-/*
         return (
             <div className="wrapper">
                 <div className="mainSticky" id="main">
@@ -328,52 +327,5 @@ class SongApp extends React.Component {
                 </div>
             </div>
         );
-*/
-        return React.createElement("div", {
-                 className: "wrapper"
-               }, React.createElement("div", {
-                 className: "mainSticky",
-                 id: "main"
-               }, React.createElement("main", null, React.createElement(Player, {
-                 control: this.state.mode == "play",
-                 setInstance: this.setPlayerInstance,
-                 getInstance: this.getPlayerInstance,
-                 defaultId: this.props.defaultId,
-                 defaultTime: this.props.defaultTime,
-                 jumpTo: this.jumpTo,
-                 setControl: this.setControl,
-                 stopControl: this.stopControl,
-                 setPlayerController: this.setPlayerController,
-                 getCurrentSongList: this.getCurrentSongList,
-                 getSongIndex: this.getSongIndex
-               }), this.state.mode == "edit" && React.createElement(EditList, {
-                 addNewSongList: this.addNewSongList,
-                 allSongList: this.state.allSongList,
-                 editIndex: this.state.editIndex,
-                 setEditIndex: this.setEditIndex,
-                 setCurrentListName: this.setCurrentListName,
-                 removeCurrentSongList: this.removeCurrentSongList,
-                 swapUp: this.swapUp,
-                 swapDown: this.swapDown,
-                 removeSongFromCurrentEditList: this.removeSongFromCurrentEditList
-               }))), React.createElement("div", {
-                 className: "aside"
-               }, React.createElement("aside", null, React.createElement("table", {
-                 cellPadding: "15",
-                 className: "modeTbl"
-               }, React.createElement("thead", null, React.createElement("tr", null, React.createElement("td", null, React.createElement("a", {
-                 href: "#",
-                 onClick: e => this.changeMode(e, "play")
-               }, "\u30EA\u30B9\u30C8\u518D\u751F")), React.createElement("td", null, React.createElement("a", {
-                 href: "#",
-                 onClick: e => this.changeMode(e, "edit")
-               }, "\u30EA\u30B9\u30C8\u7DE8\u96C6"))))), React.createElement(SongList, {
-                 allSongList: this.state.allSongList,
-                 listIndex: this.state.listIndex,
-                 onClickListener: this.transPage,
-                 mode: this.state.mode,
-                 setListIndex: this.setListIndex,
-                 addSong: this.addSong2CurrentEditList
-               }))));
     }
 }
