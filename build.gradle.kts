@@ -1,10 +1,8 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.springframework.boot.gradle.tasks.run.BootRun
 
 plugins {
 	id("org.springframework.boot") version "2.2.2.RELEASE"
 	id("io.spring.dependency-management") version "1.0.8.RELEASE"
-	id("com.github.node-gradle.node") version "2.2.3"
 	kotlin("jvm") version "1.3.61"
 	kotlin("plugin.spring") version "1.3.61"
 }
@@ -15,11 +13,6 @@ java.sourceCompatibility = JavaVersion.VERSION_1_8
 
 repositories {
 	mavenCentral()
-}
-
-node {
-	version = "15.5.0"
-	download = true
 }
 
 dependencies {
@@ -34,23 +27,6 @@ dependencies {
 	}
 	implementation("org.postgresql:postgresql")
 	implementation("org.springframework.boot:spring-boot-starter-security")
-}
-
-tasks {
-	register("cleanAutoGen") {
-		delete(fileTree("src/main/resources/static/js").matching {
-			include("**/*.js")
-		})
-	}
-	register("babel") {
-		dependsOn("npm_run_babel", "cleanAutoGen")
-		mustRunAfter("cleanAutoGen")
-	}
-	named<BootRun>("bootRun") {
-		dependsOn("babel")
-		mustRunAfter("babel")
-		sourceResources(sourceSets["main"])
-	}
 }
 
 tasks.withType<Test> {

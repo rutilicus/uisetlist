@@ -121,6 +121,7 @@ class Player extends React.Component {
     }
 
     render() {
+/*
         return(
             <div className="player">
                 <div id="player"></div>
@@ -164,5 +165,57 @@ class Player extends React.Component {
                 }
             </div>
         );
+*/
+        return React.createElement("div", {
+                 className: "player"
+               }, React.createElement("div", {
+                 id: "player"
+               }), React.createElement("br", null), React.createElement("label", null, "\u30D7\u30EC\u30FC\u30E4\u30FC\u30B5\u30A4\u30BA", React.createElement("input", {
+                 type: "number",
+                 id: "playerWidth",
+                 size: "6",
+                 value: this.state.playerWidth,
+                 onChange: e => this.setState({
+                   playerWidth: event.target.value
+                 })
+               }), "x", React.createElement("input", {
+                 type: "number",
+                 id: "playerHeight",
+                 size: "6",
+                 value: this.state.playerHeight,
+                 onChange: e => this.setState({
+                   playerHeight: event.target.value
+                 })
+               }), React.createElement("button", {
+                 type: "button",
+                 onClick: this.resizePlayer
+               }, "\u53CD\u6620")), React.createElement("br", null), this.props.control && React.createElement("fieldset", {
+                 className: "controlButtons"
+               }, React.createElement("legend", null, "\u66F2\u7D42\u4E86\u5F8C\u30D7\u30EC\u30FC\u30E4\u30FC\u5236\u5FA1"), React.createElement("p", null, React.createElement("input", {
+                 type: "radio",
+                 id: "none",
+                 name: "playerControl",
+                 value: "none",
+                 onClick: this.onControlFuncChanged,
+                 defaultChecked: true
+               }), React.createElement("label", {
+                 htmlFor: "none"
+               }, "\u5236\u5FA1\u306A\u3057")), React.createElement("p", null, React.createElement("input", {
+                 type: "radio",
+                 id: "loop",
+                 name: "playerControl",
+                 value: "loop",
+                 onClick: this.onControlFuncChanged
+               }), React.createElement("label", {
+                 htmlFor: "loop"
+               }, "1\u66F2\u30EB\u30FC\u30D7")), React.createElement("p", null, React.createElement("input", {
+                 type: "radio",
+                 id: "next",
+                 name: "playerControl",
+                 value: "next",
+                 onClick: this.onControlFuncChanged
+               }), React.createElement("label", {
+                 htmlFor: "next"
+               }, "\u6B21\u306E\u66F2\u306B\u79FB\u52D5"))));
     }
 }

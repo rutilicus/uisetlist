@@ -31,5 +31,3 @@ out/
 ### VS Code ###
 .vscode/
 /src/main/resources/application.properties
-/src/main/resources/static/js/*.js
-node_modules/

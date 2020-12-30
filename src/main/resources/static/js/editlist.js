@@ -74,6 +74,7 @@ class EditList extends React.Component {
     }
 
     render() {
+/*
         return(
             <div>
                 <select className="songListSelect"
@@ -121,5 +122,57 @@ class EditList extends React.Component {
                 </table>
             </div>
         );
+*/
+        return React.createElement("div", null, React.createElement("select", {
+                 className: "songListSelect",
+                 defaultValue: 1,
+                 onChange: this.onChange,
+                 id: selectId
+               }, this.props.allSongList.slice(1).map((list, index) => {
+                 return React.createElement("option", {
+                   key: index + 1,
+                   value: index + 1
+                 }, list.name);
+               }), React.createElement("option", {
+                 value: this.props.allSongList.length
+               }, addNewListChoice)), this.props.editIndex < this.props.allSongList.length && React.createElement("div", {
+                 className: "listNameEdit"
+               }, React.createElement("input", {
+                 type: "text",
+                 id: listNameInput,
+                 defaultValue: this.props.allSongList[this.props.editIndex].name
+               }), React.createElement("button", {
+                 type: "button",
+                 onClick: this.setListName
+               }, "\u30EA\u30B9\u30C8\u540D\u5909\u66F4"), React.createElement("button", {
+                 type: "button",
+                 onClick: this.deleteConfirm
+               }, "\u30EA\u30B9\u30C8\u524A\u9664")), React.createElement("table", {
+                 border: "1",
+                 className: "songTbl"
+               }, React.createElement("thead", null, React.createElement("tr", null, React.createElement("th", null, React.createElement("div", {
+                 className: "songName"
+               }, "Song Name"), React.createElement("div", {
+                 className: "artist"
+               }, "Original Artist"), React.createElement("div", {
+                 className: "movieName"
+               }, "Movie Name")))), React.createElement("tbody", null, this.props.editIndex < this.props.allSongList.length && this.props.allSongList[this.props.editIndex].list.map((song, index) => {
+                 const props = Object.assign(song, {
+                   index: index,
+                   onClickListener: null,
+                   linkEnable: false,
+                   buttonList: [{
+                     text: "↑",
+                     onClick: this.props.swapUp
+                   }, {
+                     text: "↓",
+                     onClick: this.props.swapDown
+                   }, {
+                     text: "Delete",
+                     onClick: this.props.removeSongFromCurrentEditList
+                   }]
+                 });
+                 return React.createElement(SongElem, props);
+               }))));
     }
 }
