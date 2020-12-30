@@ -51,6 +51,10 @@ tasks {
 		mustRunAfter("babel")
 		sourceResources(sourceSets["main"])
 	}
+	named("build") {
+		dependsOn("babel")
+		mustRunAfter("babel")
+	}
 }
 
 tasks.withType<Test> {
