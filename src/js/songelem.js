@@ -3,15 +3,16 @@
 class SongElem extends React.Component {
     constructor(props) {
         super(props);
+
+        this.handleClick = this.handleClick.bind(this);
     }
 
-    handleClick = (e) => {
+    handleClick(e) {
         e.preventDefault();
         this.props.onClickListener(this.props);
     }
 
     render() {
-/*
         return (
             <tr>
                 <td>
@@ -38,21 +39,5 @@ class SongElem extends React.Component {
                 </td>
             </tr>
         );
-*/
-        return React.createElement("tr", null, React.createElement("td", null, React.createElement("div", null, this.props.linkEnable && React.createElement("a", {
-                 href: "#",
-                 onClick: this.handleClick,
-                 className: "songName"
-               }, this.props.songName), !this.props.linkEnable && this.props.songName), React.createElement("div", {
-                 className: "artist"
-               }, this.props.writer), React.createElement("div", {
-                 className: "movieName"
-               }, this.props.movieName), this.props.buttonList.map((button, index) => {
-                 return React.createElement("button", {
-                   key: index,
-                   type: "button",
-                   onClick: e => button.onClick(this.props.index)
-                 }, button.text);
-               })));
     }
 }
