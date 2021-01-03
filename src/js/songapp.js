@@ -14,7 +14,14 @@ class SongApp extends React.Component {
             allSongList:
                 [{name: "全曲一覧", list: this.props.allSongs}].concat(
                     JSON.parse(localStorage[storageKey] || "[]")
-                ),
+                ).map(songList => {
+                    let newList = Object.assign(songList,
+                                                {list: songList.list.map((song, index) => {
+                                                    let newObj = Object.assign(song, {uniqueIndex: index});
+                                                    return newObj;
+                                                })});
+                    return newList;
+                }),
             mode: "play",
             listIndex: 0,
             editIndex: 1
@@ -197,7 +204,14 @@ class SongApp extends React.Component {
         const editIndex = this.state.editIndex;
         let tmp = this.state.allSongList.slice();
         if (0 < editIndex && editIndex < tmp.length) {
-            tmp[this.state.editIndex].list.push(this.state.allSongList[0].list[index]);
+            let maxIndex = -1;
+            tmp[this.state.editIndex].list.forEach(elem => {
+                maxIndex = Math.max(maxIndex, elem.uniqueIndex);
+            });
+            let newData = Object.assign({}, this.state.allSongList[0].list[index]);
+            tmp[this.state.editIndex].list.push(
+                Object.assign(newData, { uniqueIndex: maxIndex + 1 })
+            );
             this.setState({allSongList: tmp});
             localStorage[storageKey] = JSON.stringify(tmp.slice(1));
         }

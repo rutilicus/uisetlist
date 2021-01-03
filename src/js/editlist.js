@@ -109,7 +109,8 @@ class EditList extends React.Component {
                         {this.props.editIndex < this.props.allSongList.length &&
                          this.props.allSongList[this.props.editIndex].list.map((song, index) => {
                             const props = Object.assign(song,
-                                                        { index: index,
+                                                        { key: this.props.uniqueIndex,
+                                                          index: index,
                                                           onClickListener: null,
                                                           linkEnable: false,
                                                           buttonList: [{text: "↑", onClick: this.props.swapUp},
