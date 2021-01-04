@@ -37,12 +37,13 @@ class SongList extends React.Component {
                     </thead>
                     <tbody>
                         {this.props.allSongList[this.props.mode == "play" ? this.props.listIndex : 0].list.map((song, index) => {
-                            const props = Object.assign(song,
-                                                        { key: index,
-                                                          index: index,
-                                                          onClickListener: this.props.onClickListener,
-                                                          buttonList: this.props.mode == "edit" ? [{text: "Add", onClick: this.props.addSong}] : [],
-                                                          linkEnable: true });
+                            const props = Object.assign({}, song);
+                            Object.assign(props,
+                                          { key: index,
+                                            index: index,
+                                            onClickListener: this.props.onClickListener,
+                                            buttonList: this.props.mode == "edit" ? [{text: "Add", onClick: this.props.addSong}] : [],
+                                            linkEnable: true });
                             return <SongElem {...props } />;
                             })}
                     </tbody>

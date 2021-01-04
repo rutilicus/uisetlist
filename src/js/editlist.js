@@ -108,14 +108,15 @@ class EditList extends React.Component {
                     <tbody>
                         {this.props.editIndex < this.props.allSongList.length &&
                          this.props.allSongList[this.props.editIndex].list.map((song, index) => {
-                            const props = Object.assign(song,
-                                                        { key: this.props.uniqueIndex,
-                                                          index: index,
-                                                          onClickListener: null,
-                                                          linkEnable: false,
-                                                          buttonList: [{text: "↑", onClick: this.props.swapUp},
-                                                                       {text: "↓", onClick: this.props.swapDown},
-                                                                       {text: "Delete", onClick: this.props.removeSongFromCurrentEditList}]});
+                            const props = Object.assign({}, song);
+                            Object.assign(props,
+                                          { key: this.props.uniqueIndex,
+                                            index: index,
+                                            onClickListener: null,
+                                            linkEnable: false,
+                                            buttonList: [{text: "↑", onClick: this.props.swapUp},
+                                                         {text: "↓", onClick: this.props.swapDown},
+                                                         {text: "Delete", onClick: this.props.removeSongFromCurrentEditList}]});
                             return <SongElem {...props } />;
                             })}
                     </tbody>
