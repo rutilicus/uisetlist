@@ -12,6 +12,7 @@ class Player extends React.Component {
         this.onPlaybackRateChange = this.onPlaybackRateChange.bind(this);
         this.loop = this.loop.bind(this);
         this.nextSeek = this.nextSeek.bind(this);
+        this.random = this.random.bind(this);
         this.resizePlayer = this.resizePlayer.bind(this);
     }
 
@@ -80,6 +81,11 @@ class Player extends React.Component {
                 isPlayerControlEnable = true;
                 break;
 
+            case "random":
+                this.props.setPlayerController(this.random);
+                isPlayerControlEnable = true;
+                break;
+
             default:
                 this.props.setPlayerController(null);
                 break;
@@ -109,6 +115,11 @@ class Player extends React.Component {
         if (currentIndex < songList.length - 1) {
             this.props.jumpTo(currentIndex + 1);
         }
+    }
+
+    random() {
+        const songList = this.props.getCurrentSongList();
+        this.props.jumpTo(Math.floor(Math.random() * songList.length))
     }
 
     setAllSongList(newList) {
@@ -159,6 +170,11 @@ class Player extends React.Component {
                             <input type="radio" id="next" name="playerControl"
                                    value="next" onClick={this.onControlFuncChanged}/>
                             <label htmlFor="next">次の曲に移動</label>
+                        </p>
+                        <p>
+                            <input type="radio" id="random" name="playerControl"
+                                   value="random" onClick={this.onControlFuncChanged}/>
+                            <label htmlFor="random">ランダム移動</label>
                         </p>
                     </fieldset>
                 }
