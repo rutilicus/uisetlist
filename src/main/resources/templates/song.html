@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
     <head>
         <meta charset="UTF-8" http-equiv="Content-Type" content="text/html" />
-        <title>ういのセトリ - お歌一覧</title>
+        <title th:text="|${appName} - お歌一覧|"></title>
     </head>
     <body>
         <th:block th:insert="layout::header" />

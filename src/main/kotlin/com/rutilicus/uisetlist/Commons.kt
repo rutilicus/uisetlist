@@ -13,6 +13,8 @@ import java.util.zip.ZipOutputStream
 
 class Commons {
     companion object {
+        var appName = Constants.DEFAULT_APP_NAME
+
         data class File(val fileName: String, val data: ByteArray)
 
         fun getPathUriString(builder: UriComponentsBuilder, path: String): String =

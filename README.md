@@ -1,8 +1,7 @@
 uisetlist
 ===
 
-An virtual YouTuber's video and song database application.
-The application's name comes from [Hinano Ui](https://www.youtube.com/channel/UCIRI90jWpTW1exSdW7NicEg), a virtual YouTuber.
+An video and song database application for YouTuber or virtual YouTuber(VTuber).
 
 # How to use
 1. Create a Heroku Web Application with Heroku Postgres.
@@ -10,5 +9,6 @@ The application's name comes from [Hinano Ui](https://www.youtube.com/channel/UC
 1. Deploy this application and run.
 1. Access (application root)/initUser for creating admin user.
 1. Access (application root)/admin and login.
+1. Set the application name.
 1. Add video and song data.
 1. Enjoy!

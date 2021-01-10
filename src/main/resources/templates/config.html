@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8" http-equiv="Content-Type" content="text/html" />
+        <title th:text="|${appName} - 設定管理|"></title>
+    </head>
+    <body>
+        <th:block th:insert="layout::header" />
+        <main>
+            <center>
+                <th:block th:if="${param.setError}">
+                    登録に失敗しました。
+                </th:block>
+                <th:block th:if="${param.setSuccess}">
+                    登録しました。
+                </th:block>
+                <form th:action="@{/admin/procSetConfig}" method="post">
+                    <table>
+                        <tr>
+                            <th>
+                                アプリケーション名
+                            </th>
+                            <td>
+                                <input type="text" name="appName" th:value="${appName}">
+                            </td>
+                        </tr>
+                    </table>
+                    <input type="submit" value="登録">
+                </form>
+                <br>
+                <a href="/admin/">管理ページに戻る</a>
+            </center>
+        </main>
+    </body>
+</html>

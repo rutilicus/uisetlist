@@ -28,4 +28,10 @@ CREATE TABLE IF NOT EXISTS metatags
     content text NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS config
+(
+    key text PRIMARY KEY,
+    value text NOT NULL
+);
+
 ALTER TABLE song ADD COLUMN IF NOT EXISTS endtime integer DEFAULT 0 NOT NULL;

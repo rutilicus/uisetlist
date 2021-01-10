@@ -5,7 +5,7 @@
         <th:block th:each="metaTag : ${metaTags}">
             <meta th:name="${metaTag.name}" th:content="${metaTag.content}" />
         </th:block>
-        <title>ういのセトリ - 動画一覧</title>
+        <title th:text="|${appName} - 動画一覧|"></title>
     </head>
     <body>
         <th:block th:insert="layout::header" />

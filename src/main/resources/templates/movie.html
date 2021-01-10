@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
     <head>
         <meta charset="UTF-8" http-equiv="Content-Type" content="text/html" />
-        <title th:text="'ういのセトリ - 動画ページ - ' + ${name}"></title>
+        <title th:text="|${appName} - 動画ページ - ${name}|"></title>
     </head>
     <body>
         <th:block th:insert="layout::header" />

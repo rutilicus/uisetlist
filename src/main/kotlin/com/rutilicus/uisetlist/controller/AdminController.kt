@@ -1,12 +1,10 @@
 package com.rutilicus.uisetlist.controller
 
 import com.rutilicus.uisetlist.Commons
+import com.rutilicus.uisetlist.Constants
 import com.rutilicus.uisetlist.ResourceNotFoundException
 import com.rutilicus.uisetlist.model.*
-import com.rutilicus.uisetlist.service.MetaTagsService
-import com.rutilicus.uisetlist.service.MovieService
-import com.rutilicus.uisetlist.service.SongService
-import com.rutilicus.uisetlist.service.UserdataService
+import com.rutilicus.uisetlist.service.*
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -25,7 +23,8 @@ import java.util.*
 class AdminController(val movieService: MovieService,
                       val songService: SongService,
                       val metaTagsService: MetaTagsService,
-                      val userdataService: UserdataService) {
+                      val userdataService: UserdataService,
+                      val configService: ConfigService) {
     @GetMapping("/")
     fun adminPage(model: Model): String {
         return "admin"
@@ -57,6 +56,11 @@ class AdminController(val movieService: MovieService,
     fun metaConfigPage(model: Model): String {
         model.addAttribute("metaTags", metaTagsService.findAll())
         return "metaConfig"
+    }
+
+    @GetMapping("/config")
+    fun configPage(model: Model): String {
+        return "config"
     }
 
     @GetMapping("/editMovie/{id}")
@@ -139,6 +143,16 @@ class AdminController(val movieService: MovieService,
                     stringBuilder.append("\"${it.name}\",\"${it.content}\"\n")
                 }
                 files.add(Commons.Companion.File("metatags.csv", stringBuilder.toString().toByteArray(Charsets.UTF_8)))
+            }
+
+            // 設定データcsv生成
+            configService.findAll().apply {
+                val stringBuilder = StringBuilder()
+                stringBuilder.append("key,value\n")
+                this.forEach {
+                    stringBuilder.append("\"${it.key}\",\"${it.value}\"\n")
+                }
+                files.add(Commons.Companion.File("config.csv", stringBuilder.toString().toByteArray(Charsets.UTF_8)))
             }
 
             Commons.zip(files).get().let {
@@ -452,5 +466,34 @@ class AdminController(val movieService: MovieService,
                         builder,
                         "/admin/metaConfig",
                         listOf(Pair("deleteSuccess", Optional.empty())))
+    }
+
+    @PostMapping("/procSetConfig")
+    fun setConfigProc(@ModelAttribute form: SetConfigForm, builder: UriComponentsBuilder): String {
+        val appName = if (form.appName.isBlank()) Constants.DEFAULT_APP_NAME else form.appName
+
+        try {
+            val config = mutableListOf<Config>()
+            Config().apply {
+                this.key = Constants.KEY_APP_NAME
+                this.value = appName
+                config.add(this)
+            }
+
+            configService.setConfig(config)
+
+            Commons.appName = appName
+        } catch (e:Exception) {
+            return "redirect:" +
+                    Commons.getPathUriString(
+                            builder,
+                            "/admin/config",
+                            listOf(Pair("setError", Optional.empty())))
+        }
+        return "redirect:" +
+                Commons.getPathUriString(
+                        builder,
+                        "/admin/config",
+                        listOf(Pair("setSuccess", Optional.empty())))
     }
 }
