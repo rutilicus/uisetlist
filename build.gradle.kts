@@ -4,7 +4,7 @@ import org.springframework.boot.gradle.tasks.run.BootRun
 plugins {
 	id("org.springframework.boot") version "2.2.2.RELEASE"
 	id("io.spring.dependency-management") version "1.0.8.RELEASE"
-	id("com.github.node-gradle.node") version "2.2.3"
+	id("com.github.node-gradle.node") version "3.1.0"
 	kotlin("jvm") version "1.3.61"
 	kotlin("plugin.spring") version "1.3.61"
 }
@@ -18,8 +18,8 @@ repositories {
 }
 
 node {
-	version = "15.5.0"
-	download = true
+	download.set(true)
+	version.set("16.2.0")
 }
 
 dependencies {
@@ -34,6 +34,7 @@ dependencies {
 	}
 	implementation("org.postgresql:postgresql")
 	implementation("org.springframework.boot:spring-boot-starter-security")
+	implementation("com.opencsv:opencsv:5.2")
 }
 
 tasks {

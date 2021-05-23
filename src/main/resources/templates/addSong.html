@@ -19,6 +19,13 @@
                 <input type="submit" value="作成">
             </form>
             <br>
+            <form th:action="@{/admin/procAddSongCsv}" method="post" enctype="multipart/form-data">
+                <p>CSVファイルアップロード</p>
+                <input type="file" name="file" accept="text/csv" required>
+                <br>
+                <input type="submit" value="送信">
+            </form>
+            <br>
             <a href="/admin/">管理ページに戻る</a>
         </center>
     </main>

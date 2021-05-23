@@ -1,8 +1,10 @@
 package com.rutilicus.uisetlist.controller
 
+import com.opencsv.bean.CsvToBeanBuilder
 import com.rutilicus.uisetlist.Commons
 import com.rutilicus.uisetlist.Constants
 import com.rutilicus.uisetlist.ResourceNotFoundException
+import com.rutilicus.uisetlist.SongData
 import com.rutilicus.uisetlist.model.*
 import com.rutilicus.uisetlist.service.*
 import org.springframework.http.HttpHeaders
@@ -13,6 +15,8 @@ import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.util.UriComponentsBuilder
 import java.io.File
+import java.io.StringReader
+import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.sql.Date
 import java.time.format.DateTimeFormatter
@@ -276,6 +280,63 @@ class AdminController(val movieService: MovieService,
                         listOf(Pair("success", Optional.empty())))
     }
 
+    @PostMapping("/procAddSongCsv")
+    fun addSongCsvProc(@ModelAttribute form: AddSongCsvForm, builder: UriComponentsBuilder): String {
+        if (form.file == null || form.file!!.isEmpty) {
+            // ファイル取得失敗
+            return "redirect:" +
+                    Commons.getPathUriString(
+                        builder,
+                        "/admin/addSong",
+                        listOf(Pair("error", Optional.empty())))
+        }
+
+        val strReader = StringReader(form.file!!.bytes.toString(StandardCharsets.UTF_8))
+        val beanList =
+            try {
+                CsvToBeanBuilder<SongData>(strReader)
+                    .withType(SongData::class.java)
+                    .withIgnoreLeadingWhiteSpace(true)
+                    .build()
+                    .parse()
+            } catch (e: Exception) {
+                // CSVパース失敗
+                return "redirect:" +
+                        Commons.getPathUriString(
+                            builder,
+                            "/admin/addSong",
+                            listOf(Pair("error", Optional.empty())))
+            }
+
+        for (songData in beanList) {
+            if (songData.movieId.isBlank() || songData.songName.isBlank() || songData.writer.isBlank()) {
+                // 文字列フィールドが空白は不正データのためスキップ
+                continue
+            }
+
+            try {
+                val song = Song()
+                song.movieId = songData.movieId
+                song.time = songData.time
+                song.endTime = songData.endTime
+                song.songName = songData.songName
+                song.writer = songData.writer
+
+                song.movie = movieService.findAllByMovieId(song.movieId).first()
+                songService.addSong(song)
+            } catch (e: Exception) {
+                // ここでの例外は登録済みデータまたは未登録データのため処理を継続
+                e.printStackTrace()
+            }
+        }
+
+        return "redirect:" +
+                Commons.getPathUriString(
+                    builder,
+                    "/admin/addSong",
+                    listOf(Pair("success", Optional.empty())))
+    }
+
     @PostMapping("/procEditMovie")
     fun editMovieProc(@ModelAttribute form: EditMovieForm, builder: UriComponentsBuilder): String {
         val originalId = form.originalId
@@ -470,7 +531,7 @@ class AdminController(val movieService: MovieService,
 
     @PostMapping("/procSetConfig")
     fun setConfigProc(@ModelAttribute form: SetConfigForm, builder: UriComponentsBuilder): String {
-        val appName = if (form.appName.isBlank()) Constants.DEFAULT_APP_NAME else form.appName
+        val appName = form.appName.ifBlank { Constants.DEFAULT_APP_NAME }
 
         try {
             val config = mutableListOf<Config>()
