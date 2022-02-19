@@ -1,10 +1,10 @@
 package com.rutilicus.uisetlist.controller
 
-import com.rutilicus.uisetlist.model.Song
 import com.rutilicus.uisetlist.service.MovieService
 import com.rutilicus.uisetlist.service.SongService
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Controller
+import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseBody
@@ -12,6 +12,7 @@ import java.sql.Date
 
 @Controller
 @RequestMapping("api")
+@CrossOrigin
 class ApiController(val movieService: MovieService,
                     val songService: SongService) {
     data class Movie(val movieId: String,
