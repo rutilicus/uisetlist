@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" th:href="@{/css/song_app.css}">
+  <title th:text="|${appName}|"></title>
+</head>
+<body class="songApp">
+<div id="wrapper"></div>
+<!-- Load React. -->
+<script crossorigin src="https://unpkg.com/react@17/umd/react.development.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+<!--
+<script src="https://unpkg.com/react@17/umd/react.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js" crossorigin></script>
+-->
+<!-- Load our React component. -->
+<script type="module" th:src="@{/js/songapp_new.js}"></script>
+</body>
+</html>

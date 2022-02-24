@@ -2,9 +2,10 @@
   "devDependencies": {
     "@babel/cli": "^7.17.3",
     "@babel/core": "^7.17.5",
-    "@babel/preset-react": "^7.16.7"
+    "@babel/preset-react": "^7.16.7",
+    "@babel/preset-typescript": "^7.16.7"
   },
   "scripts": {
-    "babel": "babel src/js --out-dir src/main/resources/static/js --presets @babel/preset-react"
+    "babel": "babel src/js --extensions=\".ts\",\".tsx\",\".js\" --out-dir src/main/resources/static/js --presets=@babel/preset-react,@babel/preset-typescript"
   }
 }

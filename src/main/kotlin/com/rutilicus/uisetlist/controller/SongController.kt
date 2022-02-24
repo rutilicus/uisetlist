@@ -16,6 +16,7 @@ class SongController(val songService: SongService, val movieService: MovieServic
     fun songPage(
             @RequestParam(name = "id", required = false, defaultValue = "") id: String,
             @RequestParam(name = "time", required = false, defaultValue = "") time: String,
+            @RequestParam(name = "preview", required = false, defaultValue = "false") preview : Boolean,
             model: Model): String {
         if (id.isNotEmpty()) {
             movieService.findAllByMovieId(id).getOrNull(0) ?: throw ResourceNotFoundException()
@@ -23,6 +24,6 @@ class SongController(val songService: SongService, val movieService: MovieServic
         model.addAttribute("songs", songService.findAll())
         model.addAttribute("id", id)
         model.addAttribute("time", time.toIntOrNull())
-        return "songApp"
+        return if (preview) "songApp_new" else "songApp"
     }
 }

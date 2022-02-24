@@ -1,6 +1,13 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.springframework.boot.gradle.tasks.run.BootRun
 
+val developmentOnly by configurations.creating
+configurations {
+	runtimeClasspath {
+		extendsFrom(developmentOnly)
+	}
+}
+
 plugins {
 	id("org.springframework.boot") version "2.2.2.RELEASE"
 	id("io.spring.dependency-management") version "1.0.8.RELEASE"
@@ -35,6 +42,7 @@ dependencies {
 	implementation("org.postgresql:postgresql")
 	implementation("org.springframework.boot:spring-boot-starter-security")
 	implementation("com.opencsv:opencsv:5.2")
+	developmentOnly("org.springframework.boot:spring-boot-devtools")
 }
 
 tasks {
