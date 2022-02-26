@@ -1,6 +1,7 @@
+import { SongData } from "./types.js"
+
 interface SongElemProps {
-  songName: string;
-  artist: string;
+  songData: SongData
   index: number;
   onClickListener(number): void;
 }
@@ -23,11 +24,14 @@ export class SongElem extends React.Component<SongElemProps, SongElemInterface> 
   render() {
     return(
       <div className="songElem" onClick={this.handleClick}>
+        <img
+          className="thumbnail" 
+          src={`https://i.ytimg.com/vi/${this.props.songData.movie.movieId}/hqdefault.jpg`} />
         <div className="songName"> 
-          {this.props.songName}
+          {this.props.songData.songName}
         </div>
         <div className="artist"> 
-          {this.props.artist}
+          {this.props.songData.artist}
         </div>
       </div>
     );

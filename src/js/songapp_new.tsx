@@ -1,17 +1,19 @@
 import { SongData } from "./types.js"
 import { YTPlayer } from "./ytplayer_new.js"
 import { SongList } from "./songlist_new.js"
+import { ControlBar } from "./controlbar_new.js"
 
 interface SongAppProps {
 
 }
 interface SongAppState {
   allSongList?: SongData[];
+  currentSong?: SongData;
+  currentTime?: number;
 }
 
 class SongApp extends React.Component<SongAppProps, SongAppState> {
   player: YT.Player;
-  currentSongData: SongData;
 
   constructor(props) {
     super(props);
@@ -39,7 +41,9 @@ class SongApp extends React.Component<SongAppProps, SongAppState> {
   }
 
   setSongData(songData) {
-    this.currentSongData = songData;
+    this.setState({
+      currentSong: songData
+    });
     this.player.loadVideoById({
       videoId: songData.movie.movieId,
       startSeconds: songData.time
@@ -56,7 +60,11 @@ class SongApp extends React.Component<SongAppProps, SongAppState> {
             allSongList={this.state.allSongList}
             setSongData={this.setSongData}/>
         </main>
-        <footer></footer>
+        <footer>
+          <ControlBar
+            currentSong={this.state.currentSong}
+            currentTime={this.state.currentTime}/>
+        </footer>
       </div>
     );
   }

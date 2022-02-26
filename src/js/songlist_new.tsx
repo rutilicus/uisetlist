@@ -26,8 +26,7 @@ export class SongList extends React.Component<SongListProps, SongListState> {
         {this.props.allSongList.map((song, index) => {
           return <SongElem 
             key={index}
-            songName={song.songName}
-            artist={song.artist}
+            songData={song}
             index={index}
             onClickListener={this.onSongElemClick}/>;
         })}
