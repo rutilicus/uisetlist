@@ -32,7 +32,9 @@ export class YTPlayer extends React.Component<YTPlayerProps, YTPlayerState> {
 
   render() {
     return (
-      <div id="ytplayer"></div>
+      <div id="ytwrapper">
+        <div id="ytplayer"></div>
+      </div>
     );
   }
 }

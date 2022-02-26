@@ -18,24 +18,31 @@ export class ControlBar extends React.Component<ControlBarProps, ControlBarState
           <span className="material-icons">skip_next</span>
         </div>
         {this.props.currentSong && 
-          <div className="songInfo">
+          <div className="playSongInfo">
             <img
               className="thumbnail" 
               src={`https://i.ytimg.com/vi/${this.props.currentSong.movie.movieId}/hqdefault.jpg`} />
-            <div className="songName">
-              {this.props.currentSong.songName}
-            </div>
-            <div className="artist">
-            {this.props.currentSong.artist}
-            </div>
-            <div className="movieName">
-              {this.props.currentSong.movie.name}
+            <div>
+              <div className="songName">
+                {this.props.currentSong.songName}
+              </div>
+              <div>
+                <span className="artist">
+                  {this.props.currentSong.artist}
+                </span>
+                {this.props.currentSong.artist &&
+                  <span>・</span>
+                }
+                <span className="movieName">
+                  {this.props.currentSong.movie.name}
+                </span>
+              </div>
             </div>
           </div>
         }
-        <div className="controlIcons">
+        <div className="controlIcons controlRight">
           <span id="volumeButton" className="material-icons">volume_up</span>
-          <span id="repeatButton" className="material-icons playButton">repeat</span>
+          <span id="repeatButton" className="material-icons">repeat</span>
         </div>
       </div>
     );

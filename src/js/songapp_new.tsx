@@ -53,18 +53,17 @@ class SongApp extends React.Component<SongAppProps, SongAppState> {
   render() {
     return (
       <div>
-        <header></header>
         <main>
-          <YTPlayer setPlayerInstance={this.setPlayerInstance}/>
-          <SongList
-            allSongList={this.state.allSongList}
-            setSongData={this.setSongData}/>
-        </main>
-        <footer>
+          <div className="playerMain">
+            <YTPlayer setPlayerInstance={this.setPlayerInstance}/>
+            <SongList
+              allSongList={this.state.allSongList}
+              setSongData={this.setSongData}/>
+          </div>
           <ControlBar
             currentSong={this.state.currentSong}
             currentTime={this.state.currentTime}/>
-        </footer>
+        </main>
       </div>
     );
   }

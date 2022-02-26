@@ -27,11 +27,13 @@ export class SongElem extends React.Component<SongElemProps, SongElemInterface> 
         <img
           className="thumbnail" 
           src={`https://i.ytimg.com/vi/${this.props.songData.movie.movieId}/hqdefault.jpg`} />
-        <div className="songName"> 
-          {this.props.songData.songName}
-        </div>
-        <div className="artist"> 
-          {this.props.songData.artist}
+        <div className="songInfo">
+          <div className="songName"> 
+            {this.props.songData.songName}
+          </div>
+          <div className="artist"> 
+            {this.props.songData.artist}
+          </div>
         </div>
       </div>
     );
