@@ -1,6 +1,7 @@
 interface YTPlayerProps {
   setPlayerInstance(player: YT.Player): void;
   setPlayerState(state: number): void;
+  startInterval(): void;
 }
 interface YTPlayerState {
 
@@ -34,6 +35,7 @@ export class YTPlayer extends React.Component<YTPlayerProps, YTPlayerState> {
       }
     });
     this.props.setPlayerInstance(player);
+    this.props.startInterval();
   }
 
   onPlayerStateChange(event) {
