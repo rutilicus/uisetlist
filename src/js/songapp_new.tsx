@@ -10,6 +10,7 @@ interface SongAppState {
   allSongList?: SongData[];
   currentSong?: SongData;
   currentTime?: number;
+  playerState?: number;
 }
 
 class SongApp extends React.Component<SongAppProps, SongAppState> {
@@ -20,6 +21,9 @@ class SongApp extends React.Component<SongAppProps, SongAppState> {
 
     this.setPlayerInstance = this.setPlayerInstance.bind(this);
     this.setSongData = this.setSongData.bind(this);
+    this.setPlayerState = this.setPlayerState.bind(this);
+    this.playVideo = this.playVideo.bind(this);
+    this.pauseVideo = this.pauseVideo.bind(this);
 
     this.state = {
       allSongList: []
@@ -40,6 +44,20 @@ class SongApp extends React.Component<SongAppProps, SongAppState> {
     this.player = player;
   }
 
+  setPlayerState(state) {
+    this.setState({
+      playerState: state
+    });
+  }
+
+  playVideo() {
+    this.player.playVideo();
+  }
+
+  pauseVideo() {
+    this.player.pauseVideo();
+  }
+
   setSongData(songData) {
     this.setState({
       currentSong: songData
@@ -55,14 +73,19 @@ class SongApp extends React.Component<SongAppProps, SongAppState> {
       <div>
         <main>
           <div className="playerMain">
-            <YTPlayer setPlayerInstance={this.setPlayerInstance}/>
+            <YTPlayer
+              setPlayerInstance={this.setPlayerInstance}
+              setPlayerState={this.setPlayerState}/>
             <SongList
               allSongList={this.state.allSongList}
               setSongData={this.setSongData}/>
           </div>
           <ControlBar
             currentSong={this.state.currentSong}
-            currentTime={this.state.currentTime}/>
+            currentTime={this.state.currentTime}
+            playerState={this.state.playerState}
+            playVideo={this.playVideo}
+            pauseVideo={this.pauseVideo}/>
         </main>
       </div>
     );

@@ -3,10 +3,15 @@ import { SongData } from "./types.js";
 interface ControlBarProps {
   currentSong?: SongData;
   currentTime?: number;
+  playerState?: number;
+  playVideo(): void;
+  pauseVideo(): void;
 }
 interface ControlBarState {
 
 }
+
+const YT_PLAYING = 1;
 
 export class ControlBar extends React.Component<ControlBarProps, ControlBarState> {
   render() {
@@ -14,7 +19,18 @@ export class ControlBar extends React.Component<ControlBarProps, ControlBarState
       <div className="controlBar">
         <div className="controlIcons">
           <span className="material-icons">skip_previous</span>
-          <span id="playButton" className="material-icons playButton">play_arrow</span>
+          {this.props.playerState === YT_PLAYING &&
+            <span
+              id="pauseButton"
+              className="material-icons playButton"
+              onClick={this.props.pauseVideo}>pause</span>          
+          }
+          {this.props.playerState !== YT_PLAYING &&
+            <span
+              id="playButton"
+              className="material-icons playButton"
+              onClick={this.props.playVideo}>play_arrow</span>          
+          }
           <span className="material-icons">skip_next</span>
         </div>
         {this.props.currentSong && 

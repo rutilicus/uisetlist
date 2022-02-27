@@ -1,5 +1,6 @@
 interface YTPlayerProps {
   setPlayerInstance(player: YT.Player): void;
+  setPlayerState(state: number): void;
 }
 interface YTPlayerState {
 
@@ -10,6 +11,7 @@ export class YTPlayer extends React.Component<YTPlayerProps, YTPlayerState> {
     super(props);
 
     this.loadVideo = this.loadVideo.bind(this);
+    this.onPlayerStateChange = this.onPlayerStateChange.bind(this);
   }
 
   componentDidMount() {
@@ -26,8 +28,16 @@ export class YTPlayer extends React.Component<YTPlayerProps, YTPlayerState> {
   }
 
   loadVideo() {
-    const player = new YT.Player('ytplayer', {});
-   this.props.setPlayerInstance(player);
+    const player = new YT.Player('ytplayer', {
+      events: {
+        'onStateChange': this.onPlayerStateChange
+      }
+    });
+    this.props.setPlayerInstance(player);
+  }
+
+  onPlayerStateChange(event) {
+    this.props.setPlayerState(event.data);
   }
 
   render() {
