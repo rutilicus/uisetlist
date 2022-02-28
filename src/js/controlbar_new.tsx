@@ -24,10 +24,29 @@ export class ControlBar extends React.Component<ControlBarProps, ControlBarState
     super(props);
 
     this.advanceRepeatState = this.advanceRepeatState.bind(this);
+    this.getTimeString = this.getTimeString.bind(this);
+    this.getTimeInfo = this.getTimeInfo.bind(this);
+    this.getZeroPaddedNum = this.getZeroPaddedNum.bind(this);
   }
 
   advanceRepeatState() {
     this.props.advanceRepeatState();
+  }
+
+  getZeroPaddedNum(num: number): string {
+    return ("00" + num).slice(-2);
+  }
+
+  getTimeString(time: number): string {
+    let timeRounded = Math.floor(time);
+    return this.getZeroPaddedNum(Math.floor(timeRounded / 60)) +
+      ":" + this.getZeroPaddedNum(timeRounded % 60);
+  }
+
+  getTimeInfo(): string {
+    return this.getTimeString(this.props.currentTime - this.props.currentSong.time) +
+      " / " +
+      this.getTimeString(this.props.currentSong.endTime - this.props.currentSong.time);
   }
 
   render() {
@@ -51,6 +70,13 @@ export class ControlBar extends React.Component<ControlBarProps, ControlBarState
             className="material-icons"
             onClick={this.props.seekNext}>skip_next</span>
         </div>
+        {this.props.currentSong && this.props.currentTime &&
+          this.props.currentSong.time <= this.props.currentTime &&
+          this.props.currentTime <= this.props.currentSong.endTime &&
+          <span className="timeInfo">
+            {this.getTimeInfo()}
+          </span>
+        }
         {this.props.currentSong && 
           <div className="playSongInfo">
             <img

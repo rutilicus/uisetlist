@@ -98,7 +98,11 @@ main {
   display: flex;
   margin: auto;
   overflow: hidden hidden;
-  max-width: calc(100vw - 16vw);
+  max-width: calc(100vw - 23rem);
+}
+
+.timeInfo {
+  width: 7rem;
 }
 
 .disable {
@@ -149,5 +153,9 @@ main {
 
   .playSongInfo {
     max-width: calc(100vw - 13rem);
+  }
+
+  .timeInfo {
+    display: none;
   }
 }
