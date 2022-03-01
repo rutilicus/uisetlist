@@ -101,7 +101,7 @@ class SongApp extends React.Component<SongAppProps, SongAppState> {
         currentTime: currentTime,
         isMuted: this.player.isMuted && this.player.isMuted()
       });
-      if (currentTime != -1 && this.state.currentSongIndex) {
+      if (this.state.currentSongIndex) {
         let currentSong = this.state.allSongList[this.state.currentSongIndex];
         if (currentTime >= currentSong.endTime) {
           this.seekNext();
@@ -147,19 +147,21 @@ class SongApp extends React.Component<SongAppProps, SongAppState> {
 
   seekNextForce() {
     let currentIndex = this.state.currentSongIndex;
-    if (this.state.repeatState === Constants.REPEAT_ONE) {
-      if (currentIndex + 1 < this.state.allSongList.length) {
-        this.setSongIndex(currentIndex + 1);
+    if (currentIndex) {
+      if (this.state.repeatState === Constants.REPEAT_ONE) {
+        if (currentIndex + 1 < this.state.allSongList.length) {
+          this.setSongIndex(currentIndex + 1);
+        }
+      } else {
+        this.seekNext();
       }
-    } else {
-      this.seekNext();
     }
   }
 
   seekPrev() {
     let currentTime = this.state.currentTime
-    if (currentTime != -1) {
-      let currentIndex = this.state.currentSongIndex;
+    let currentIndex = this.state.currentSongIndex;
+    if (currentIndex) {
       let currentSong = this.state.allSongList[currentIndex];
       if (currentTime - currentSong.time <= SEEK_PREV_TIME_THRES) {
         this.setSongIndex(Math.max(0, currentIndex - 1));

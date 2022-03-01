@@ -39,6 +39,8 @@ body {
 .material-icons {
   padding: .5rem;
   vertical-align: middle;
+  cursor: default;
+  user-select: none;
 }
 
 .playButton {
