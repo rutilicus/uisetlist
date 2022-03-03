@@ -39,7 +39,7 @@ body {
 .material-icons {
   padding: .5rem;
   vertical-align: middle;
-  cursor: default;
+  cursor: pointer;
   user-select: none;
 }
 
@@ -62,7 +62,7 @@ main {
 
 .playerMain {
   display: flex;
-  height: calc(100vh - 3rem);
+  height: calc(100vh - 4rem);
   padding-left: 5vw;
   padding-right: 5vw;
   justify-content: center;
@@ -72,6 +72,7 @@ main {
   height: 3rem;
   display: flex;
   align-items: center;
+  line-height: normal;
 }
 
 .thumbnail {
@@ -109,6 +110,16 @@ main {
 
 .disable {
   color: gray;
+}
+
+.seekBar {
+  height: 1rem;
+  width: 100vw;
+  margin: 0;
+}
+
+.playerFooter {
+  line-height: 0;
 }
 
 #ytwrapper {

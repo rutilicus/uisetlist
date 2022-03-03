@@ -38,6 +38,7 @@ class SongApp extends React.Component<SongAppProps, SongAppState> {
     this.seekNext = this.seekNext.bind(this);
     this.seekNextForce = this.seekNextForce.bind(this);
     this.seekPrev = this.seekPrev.bind(this);
+    this.seekTime = this.seekTime.bind(this);
 
     this.state = {
       allSongList: [],
@@ -171,6 +172,10 @@ class SongApp extends React.Component<SongAppProps, SongAppState> {
     }
   }
 
+  seekTime(time: number) {
+    this.player.seekTo(time);
+  }
+
   render() {
     return (
       <div>
@@ -196,7 +201,8 @@ class SongApp extends React.Component<SongAppProps, SongAppState> {
             unMute={this.unMute}
             advanceRepeatState={this.advanceRepeatState}
             seekPrev={this.seekPrev}
-            seekNext={this.seekNextForce}/>
+            seekNext={this.seekNextForce}
+            seekTime={this.seekTime}/>
         </main>
       </div>
     );
