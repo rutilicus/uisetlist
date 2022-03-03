@@ -32,4 +32,5 @@ out/
 .vscode/
 /src/main/resources/application.properties
 /src/main/resources/static/js/*.js
+/src/main/resources/static/js/*.txt
 node_modules/

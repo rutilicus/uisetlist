@@ -51,18 +51,18 @@ tasks {
 			include("**/*.js")
 		})
 	}
-	register("babel") {
-		dependsOn("npm_run_babel", "cleanAutoGen")
+	register("npm") {
+		dependsOn("npm_run_webpack", "npm_run_babel", "cleanAutoGen")
 		mustRunAfter("cleanAutoGen")
 	}
 	named<BootRun>("bootRun") {
-		dependsOn("babel")
-		mustRunAfter("babel")
+		dependsOn("npm")
+		mustRunAfter("npm")
 		sourceResources(sourceSets["main"])
 	}
 	named("build") {
-		dependsOn("babel")
-		mustRunAfter("babel")
+		dependsOn("npm")
+		mustRunAfter("npm")
 	}
 }
 

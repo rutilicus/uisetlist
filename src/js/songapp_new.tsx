@@ -1,8 +1,10 @@
-import { SongData } from "./types.js"
-import { YTPlayer } from "./ytplayer_new.js"
-import { SongList } from "./songlist_new.js"
-import { ControlBar } from "./controlbar_new.js"
-import * as Constants from "./constants.js"
+import { SongData } from "./types"
+import { YTPlayer } from "./ytplayer_new"
+import { SongList } from "./songlist_new"
+import { ControlBar } from "./controlbar_new"
+import * as Constants from "./constants"
+import React from "react"
+import ReactDOM from "react-dom"
 
 interface SongAppProps {
 
@@ -173,7 +175,7 @@ class SongApp extends React.Component<SongAppProps, SongAppState> {
   }
 
   seekTime(time: number) {
-    this.player.seekTo(time);
+    this.player.seekTo(time, true);
   }
 
   render() {

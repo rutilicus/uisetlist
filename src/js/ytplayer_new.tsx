@@ -1,3 +1,5 @@
+import React from "react"
+
 interface YTPlayerProps {
   setPlayerInstance(player: YT.Player): void;
   setPlayerState(state: number): void;
@@ -6,6 +8,11 @@ interface YTPlayerProps {
 interface YTPlayerState {
 
 }
+
+interface Window {
+  onYouTubeIframeAPIReady(): void;
+}
+declare var window: Window;
 
 export class YTPlayer extends React.Component<YTPlayerProps, YTPlayerState> {
   constructor(props) {
@@ -16,7 +23,7 @@ export class YTPlayer extends React.Component<YTPlayerProps, YTPlayerState> {
   }
 
   componentDidMount() {
-    if (!window.YT) {
+    if (document.getElementById('iframe_api') === null) {
       let tag = document.createElement('script');
       tag.src = "https://www.youtube.com/iframe_api";
       let firstScriptTag = document.getElementsByTagName('script')[0];

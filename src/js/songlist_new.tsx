@@ -1,5 +1,6 @@
-import { SongData } from "./types.js"
-import { SongElem } from "./songelem_new.js"
+import React from "react";
+import { SongData } from "./types"
+import { SongElem } from "./songelem_new"
 
 interface SongListProps {
   allSongList: SongData[];

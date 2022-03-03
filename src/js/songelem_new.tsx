@@ -1,4 +1,5 @@
-import { SongData } from "./types.js"
+import React from "react";
+import { SongData } from "./types"
 
 interface SongElemProps {
   songData: SongData

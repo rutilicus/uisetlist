@@ -1,5 +1,6 @@
-import { SongData } from "./types.js";
-import * as Constants from "./constants.js"
+import React from "react";
+import { SongData } from "./types";
+import * as Constants from "./constants"
 
 interface ControlBarProps {
   currentSong?: SongData;
@@ -14,7 +15,7 @@ interface ControlBarProps {
   advanceRepeatState(): void;
   seekPrev(): void;
   seekNext(): void;
-  seekTime(): void;
+  seekTime(time: number): void;
 }
 interface ControlBarState {
 
@@ -52,7 +53,7 @@ export class ControlBar extends React.Component<ControlBarProps, ControlBarState
   }
 
   onSeekBarChange(e: React.ChangeEvent<HTMLInputElement>) {
-    this.props.seekTime(e.target.value);
+    this.props.seekTime(parseInt(e.target.value));
   }
 
   render() {
