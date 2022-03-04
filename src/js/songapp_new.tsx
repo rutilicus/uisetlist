@@ -1,4 +1,4 @@
-import { SongData, KeySongData, NamedSongList } from "./types"
+import { SongData, IdSongData, NamedSongList } from "./types"
 import { YTPlayer } from "./ytplayer_new"
 import { SongList } from "./songlist_new"
 import { ControlBar } from "./controlbar_new"
@@ -12,7 +12,7 @@ interface SongAppProps {
 interface SongAppState {
   songListList?: NamedSongList[];
   currentListIndex?: number;
-  currentSong?: KeySongData;
+  currentSong?: IdSongData;
   currentTime?: number;
   playerState?: number;
   isMuted?: boolean;
@@ -42,6 +42,7 @@ class SongApp extends React.Component<SongAppProps, SongAppState> {
     this.seekNextForce = this.seekNextForce.bind(this);
     this.seekPrev = this.seekPrev.bind(this);
     this.seekTime = this.seekTime.bind(this);
+    this.resetCurrentList = this.resetCurrentList.bind(this);
 
     this.state = {
       songListList: [
@@ -63,7 +64,7 @@ class SongApp extends React.Component<SongAppProps, SongAppState> {
       songListList: [{
         name: "全曲一覧",
         songList: allSongList.map((songData, index) => {
-          return {...songData, ...{key: index}};
+          return {...songData, ...{id: index}};
         })}]
     });
     return Promise.resolve();
@@ -134,7 +135,7 @@ class SongApp extends React.Component<SongAppProps, SongAppState> {
 
   seekNext() {
     let arrayIndex = this.state.songListList[this.state.currentListIndex].songList.findIndex(
-      (keySongData) => keySongData.key === this.state.currentSong.key
+      (idSongData) => idSongData.id === this.state.currentSong.id
     );
     let songNum = this.state.songListList[this.state.currentListIndex].songList.length;
     if (arrayIndex != -1) {
@@ -163,7 +164,7 @@ class SongApp extends React.Component<SongAppProps, SongAppState> {
 
   seekNextForce() {
     let arrayIndex = this.state.songListList[this.state.currentListIndex].songList.findIndex(
-      (keySongData) => keySongData.key === this.state.currentSong.key
+      (idSongData) => idSongData.id === this.state.currentSong.id
     );
     if (arrayIndex != -1) {
       if (this.state.repeatState === Constants.REPEAT_ONE) {
@@ -178,7 +179,7 @@ class SongApp extends React.Component<SongAppProps, SongAppState> {
 
   seekPrev() {
     let arrayIndex = this.state.songListList[this.state.currentListIndex].songList.findIndex(
-      (keySongData) => keySongData.key === this.state.currentSong.key
+      (idSongData) => idSongData.id === this.state.currentSong.id
     );
     if (arrayIndex != -1) {
       if (this.state.currentTime - this.state.currentSong.time <= SEEK_PREV_TIME_THRES) {
@@ -193,6 +194,12 @@ class SongApp extends React.Component<SongAppProps, SongAppState> {
     this.player.seekTo(time, true);
   }
 
+  resetCurrentList(list: IdSongData[]) {
+    let tmp = this.state.songListList.slice();
+    tmp[this.state.currentListIndex].songList = list;
+    this.setState({songListList: tmp});
+  }
+
   render() {
     return (
       <div>
@@ -204,7 +211,8 @@ class SongApp extends React.Component<SongAppProps, SongAppState> {
               startInterval={this.startInterval}/>
             <SongList
               allSongList={this.state.songListList[this.state.currentListIndex].songList}
-              setSongIndex={this.setSongIndex}/>
+              setSongIndex={this.setSongIndex}
+              resetCurrentList={this.resetCurrentList}/>
           </div>
           <ControlBar
             currentSong={this.state.currentSong}

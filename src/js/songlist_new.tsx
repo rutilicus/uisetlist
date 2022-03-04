@@ -1,10 +1,12 @@
 import React from "react";
-import { SongData } from "./types"
+import { IdSongData } from "./types"
 import { SongElem } from "./songelem_new"
+import { ReactSortable } from "react-sortablejs";
 
 interface SongListProps {
-  allSongList: SongData[];
+  allSongList: IdSongData[];
   setSongIndex(listInedx: number): void;
+  resetCurrentList(list: IdSongData[]): void;
 }
 interface SongListState {
 
@@ -24,13 +26,18 @@ export class SongList extends React.Component<SongListProps, SongListState> {
   render() {
     return(
       <div className="songList">
-        {this.props.allSongList.map((song, index) => {
-          return <SongElem 
-            key={index}
-            songData={song}
-            index={index}
-            onClickListener={this.onSongElemClick}/>;
-        })}
+        <ReactSortable
+          list={this.props.allSongList}
+          setList={this.props.resetCurrentList}
+        >
+          {this.props.allSongList.map((song, index) => {
+            return <SongElem 
+              key={index}
+              songData={song}
+              index={index}
+              onClickListener={this.onSongElemClick}/>;
+          })}
+        </ReactSortable>
       </div>
     );
   }
