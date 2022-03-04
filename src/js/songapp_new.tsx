@@ -1,4 +1,4 @@
-import { SongData } from "./types"
+import { SongData, KeySongData, NamedSongList } from "./types"
 import { YTPlayer } from "./ytplayer_new"
 import { SongList } from "./songlist_new"
 import { ControlBar } from "./controlbar_new"
@@ -10,8 +10,9 @@ interface SongAppProps {
 
 }
 interface SongAppState {
-  allSongList?: SongData[];
-  currentSongIndex?: number;
+  songListList?: NamedSongList[];
+  currentListIndex?: number;
+  currentSong?: KeySongData;
   currentTime?: number;
   playerState?: number;
   isMuted?: boolean;
@@ -43,7 +44,10 @@ class SongApp extends React.Component<SongAppProps, SongAppState> {
     this.seekTime = this.seekTime.bind(this);
 
     this.state = {
-      allSongList: [],
+      songListList: [
+        {name: "", songList: []}
+      ],
+      currentListIndex: 0,
       repeatState: Constants.REPEAT_NONE,
       currentTime: -1,
       isMuted: false
@@ -54,8 +58,13 @@ class SongApp extends React.Component<SongAppProps, SongAppState> {
     const response = await fetch("/api/song", {
       mode: 'no-cors',
     });
+    let allSongList: SongData[] = await response.json();
     this.setState({
-      allSongList: await response.json()
+      songListList: [{
+        name: "全曲一覧",
+        songList: allSongList.map((songData, index) => {
+          return {...songData, ...{key: index}};
+        })}]
     });
     return Promise.resolve();
   }
@@ -86,14 +95,15 @@ class SongApp extends React.Component<SongAppProps, SongAppState> {
     this.player.unMute();
   }
 
-  setSongIndex(index) {
+  setSongIndex(listIndex) {
+    let newSong = this.state.songListList[this.state.currentListIndex].songList[listIndex];
     this.setState({
       currentTime: -1,
-      currentSongIndex: index
+      currentSong: newSong
     });
     this.player.loadVideoById({
-      videoId: this.state.allSongList[index].movie.movieId,
-      startSeconds: this.state.allSongList[index].time
+      videoId: newSong.movie.movieId,
+      startSeconds: newSong.time
     });
   }
 
@@ -104,9 +114,8 @@ class SongApp extends React.Component<SongAppProps, SongAppState> {
         currentTime: currentTime,
         isMuted: this.player.isMuted && this.player.isMuted()
       });
-      if (this.state.currentSongIndex) {
-        let currentSong = this.state.allSongList[this.state.currentSongIndex];
-        if (currentTime >= currentSong.endTime) {
+      if (this.state.currentSong) {
+        if (currentTime >= this.state.currentSong.endTime) {
           this.seekNext();
         }
       }
@@ -124,36 +133,42 @@ class SongApp extends React.Component<SongAppProps, SongAppState> {
   }
 
   seekNext() {
-    let currentIndex = this.state.currentSongIndex;
-    let songNum = this.state.allSongList.length;
-    switch(this.state.repeatState) {
-      case Constants.REPEAT_NONE:
-        if (currentIndex + 1 < songNum) {
-          this.setSongIndex(currentIndex + 1);
-        }
-        break;
-      case Constants.REPEAT_ALL:
-        if (currentIndex + 1 < songNum) {
-          this.setSongIndex(currentIndex + 1);
-        } else {
-          this.setSongIndex(0);
-        }
-        break;
-      case Constants.REPEAT_ONE:
-        this.setSongIndex(currentIndex);
-        break;
-      case Constants.REPEAT_RANDOM:
-        this.setSongIndex(Math.floor(Math.random() * songNum));
-        break
+    let arrayIndex = this.state.songListList[this.state.currentListIndex].songList.findIndex(
+      (keySongData) => keySongData.key === this.state.currentSong.key
+    );
+    let songNum = this.state.songListList[this.state.currentListIndex].songList.length;
+    if (arrayIndex != -1) {
+      switch(this.state.repeatState) {
+        case Constants.REPEAT_NONE:
+          if (arrayIndex + 1 < songNum) {
+            this.setSongIndex(arrayIndex + 1);
+          }
+          break;
+        case Constants.REPEAT_ALL:
+          if (arrayIndex + 1 < songNum) {
+            this.setSongIndex(arrayIndex + 1);
+          } else {
+            this.setSongIndex(0);
+          }
+          break;
+        case Constants.REPEAT_ONE:
+          this.setSongIndex(arrayIndex);
+          break;
+        case Constants.REPEAT_RANDOM:
+          this.setSongIndex(Math.floor(Math.random() * songNum));
+          break
+      }
     }
   }
 
   seekNextForce() {
-    let currentIndex = this.state.currentSongIndex;
-    if (currentIndex) {
+    let arrayIndex = this.state.songListList[this.state.currentListIndex].songList.findIndex(
+      (keySongData) => keySongData.key === this.state.currentSong.key
+    );
+    if (arrayIndex != -1) {
       if (this.state.repeatState === Constants.REPEAT_ONE) {
-        if (currentIndex + 1 < this.state.allSongList.length) {
-          this.setSongIndex(currentIndex + 1);
+        if (arrayIndex + 1 < this.state.songListList[this.state.currentListIndex].songList.length) {
+          this.setSongIndex(arrayIndex + 1);
         }
       } else {
         this.seekNext();
@@ -162,14 +177,14 @@ class SongApp extends React.Component<SongAppProps, SongAppState> {
   }
 
   seekPrev() {
-    let currentTime = this.state.currentTime
-    let currentIndex = this.state.currentSongIndex;
-    if (currentIndex) {
-      let currentSong = this.state.allSongList[currentIndex];
-      if (currentTime - currentSong.time <= SEEK_PREV_TIME_THRES) {
-        this.setSongIndex(Math.max(0, currentIndex - 1));
+    let arrayIndex = this.state.songListList[this.state.currentListIndex].songList.findIndex(
+      (keySongData) => keySongData.key === this.state.currentSong.key
+    );
+    if (arrayIndex != -1) {
+      if (this.state.currentTime - this.state.currentSong.time <= SEEK_PREV_TIME_THRES) {
+        this.setSongIndex(Math.max(0, arrayIndex - 1));
       } else {
-        this.setSongIndex(currentIndex);
+        this.setSongIndex(arrayIndex);
       }
     }
   }
@@ -188,11 +203,11 @@ class SongApp extends React.Component<SongAppProps, SongAppState> {
               setPlayerState={this.setPlayerState}
               startInterval={this.startInterval}/>
             <SongList
-              allSongList={this.state.allSongList}
+              allSongList={this.state.songListList[this.state.currentListIndex].songList}
               setSongIndex={this.setSongIndex}/>
           </div>
           <ControlBar
-            currentSong={this.state.allSongList[this.state.currentSongIndex]}
+            currentSong={this.state.currentSong}
             currentTime={this.state.currentTime}
             playerState={this.state.playerState}
             isMuted={this.state.isMuted}

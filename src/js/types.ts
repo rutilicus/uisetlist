@@ -11,3 +11,12 @@ export type SongData = {
   artist: string;
   movie: Movie;
 };
+
+export type KeySongData = SongData & {
+  key: number;
+}
+
+export type NamedSongList = {
+  name: string;
+  songList: KeySongData[];
+}

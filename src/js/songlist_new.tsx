@@ -4,7 +4,7 @@ import { SongElem } from "./songelem_new"
 
 interface SongListProps {
   allSongList: SongData[];
-  setSongIndex(inedx: number): void;
+  setSongIndex(listInedx: number): void;
 }
 interface SongListState {
 
@@ -17,8 +17,8 @@ export class SongList extends React.Component<SongListProps, SongListState> {
     this.onSongElemClick = this.onSongElemClick.bind(this);
   }
 
-  onSongElemClick(index) {
-    this.props.setSongIndex(index);
+  onSongElemClick(listIndex) {
+    this.props.setSongIndex(listIndex);
   }
 
   render() {
