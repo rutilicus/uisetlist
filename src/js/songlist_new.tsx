@@ -29,6 +29,7 @@ export class SongList extends React.Component<SongListProps, SongListState> {
         <ReactSortable
           list={this.props.allSongList}
           setList={this.props.resetCurrentList}
+          delay={1000}
           delayOnTouchOnly={true}
         >
           {this.props.allSongList.map((song, index) => {
