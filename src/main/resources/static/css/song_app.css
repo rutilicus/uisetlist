@@ -34,6 +34,8 @@
 
 body {
   margin: 0;
+  --line-height-default: 1.5rem;
+  line-height: var(--line-height-default);
 }
 
 .material-icons {
@@ -72,7 +74,7 @@ main {
   height: 3rem;
   display: flex;
   align-items: center;
-  line-height: normal;
+  line-height: var(--line-height-default);
 }
 
 .thumbnail {
