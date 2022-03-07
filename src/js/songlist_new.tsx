@@ -51,20 +51,22 @@ export class SongList extends React.Component<SongListProps, SongListState> {
           </div>
         }
         { this.props.songListList.length != 0 &&
-          <ReactSortable
-            list={this.props.songListList[this.props.currentListIndex].songList}
-            setList={this.props.resetCurrentList}
-            delay={1000}
-            delayOnTouchOnly={true}
-          >
-            {this.props.songListList[this.props.currentListIndex].songList.map((song, index) => {
-              return <SongElem 
-                key={index}
-                songData={song}
-                index={index}
-                onClickListener={this.onSongElemClick}/>;
-            })}
-          </ReactSortable>
+          <div className="selectedList">
+            <ReactSortable
+              list={this.props.songListList[this.props.currentListIndex].songList}
+              setList={this.props.resetCurrentList}
+              delay={1000}
+              delayOnTouchOnly={true}
+            >
+              {this.props.songListList[this.props.currentListIndex].songList.map((song, index) => {
+                return <SongElem 
+                  key={index}
+                  songData={song}
+                  index={index}
+                  onClickListener={this.onSongElemClick}/>;
+              })}
+            </ReactSortable>
+          </div>
         }
       </div>
     );
