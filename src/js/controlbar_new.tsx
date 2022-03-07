@@ -77,12 +77,25 @@ export class ControlBar extends React.Component<ControlBarProps, ControlBarState
             <span
               className="material-icons"
               onClick={this.props.seekPrev}>skip_previous</span>
-            {this.props.playerState === Constants.YT_PLAYING &&
+            {
+              // プレーヤー未読み込み時は再生ボタンを暫定で表示
+              typeof(YT) === "undefined" &&
               <span
                 className="material-icons playButton"
                 onClick={this.props.pauseVideo}>pause</span>
             }
-            {this.props.playerState !== Constants.YT_PLAYING &&
+            {
+              typeof(YT) !== "undefined" &&
+              typeof(YT.Player) !== "undefined" &&
+              this.props.playerState === YT.PlayerState.PLAYING &&
+              <span
+                className="material-icons playButton"
+                onClick={this.props.pauseVideo}>pause</span>
+            }
+            {
+              typeof(YT) !== "undefined" &&
+              typeof(YT.Player) !== "undefined" &&
+              this.props.playerState !== YT.PlayerState.PLAYING &&
               <span
                 className="material-icons playButton"
                 onClick={this.props.playVideo}>play_arrow</span>

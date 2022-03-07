@@ -1,5 +1,3 @@
-export const YT_PLAYING = 1;
-
 export const REPEAT_NONE = 0;
 export const REPEAT_ALL = REPEAT_NONE + 1;
 export const REPEAT_ONE = REPEAT_ALL + 1;
