@@ -45,6 +45,7 @@ class SongApp extends React.Component<SongAppProps, SongAppState> {
     this.resetCurrentList = this.resetCurrentList.bind(this);
     this.convertOldUserSongListData = this.convertOldUserSongListData.bind(this);
     this.setListIndex = this.setListIndex.bind(this);
+    this.saveUserSongList = this.saveUserSongList.bind(this);
 
     this.state = {
       songListList: [
@@ -72,6 +73,11 @@ class SongApp extends React.Component<SongAppProps, SongAppState> {
         }
       };
     });
+  }
+
+  saveUserSongList(list: NamedSongList[]) {
+    // 先頭は全曲一覧のため、Trimしたものを保存
+    localStorage.setItem("allSongList", JSON.stringify(list.slice(1)));
   }
 
   async componentDidMount(): Promise<void> {
@@ -106,7 +112,7 @@ class SongApp extends React.Component<SongAppProps, SongAppState> {
       if (isOldDataUsed) {
         // 旧データ形式を新データ形式にコンバートして
         // ローカルストレージに保存しなおす
-        localStorage.setItem("allSongList", JSON.stringify(songListList.slice(1)));
+        this.saveUserSongList(songListList);
       }
     }
 
@@ -242,6 +248,9 @@ class SongApp extends React.Component<SongAppProps, SongAppState> {
     let tmp = this.state.songListList.slice();
     tmp[this.state.currentListIndex].songList = list;
     this.setState({songListList: tmp});
+    if (this.state.currentListIndex != 0) {
+      this.saveUserSongList(tmp);
+    }
   }
 
   setListIndex(index: number) {
