@@ -108,6 +108,10 @@ main {
   padding-right: .5rem;
 }
 
+.songElemWrapper {
+  position: relative;
+}
+
 .songElem {
   border-right: 1px solid gray;
   border-bottom: 1px solid gray;
@@ -180,25 +184,19 @@ main {
   opacity: 1;
 }
 
-#editButtonContent {
+.menuContent {
   display: none;
   position: fixed;
-  top: 1rem;
-  right: calc(5vw + 2rem);
+  border: solid 1px gray;
   z-index: var(--z-index-menu);
   opacity: 1;
 }
 
-#editButtonCheckBox:checked ~ #editButtonCover {
+.songListElemMenu {
   display: block;
-}
-
-#editButtonCheckBox:checked ~ #editButtonContent {
-  display: block;
-}
-
-.menuContent {
-  border: solid 1px gray;
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
 }
 
 .menuContent ul {
@@ -210,6 +208,29 @@ main {
 .menuContent ul li {
   border: 1px solid gray;
   padding: 0.5rem;
+}
+
+#editButtonContent {
+  top: 1rem;
+  right: calc(5vw + 2rem);
+}
+
+#editButtonCheckBox:checked ~ #editButtonCover {
+  display: block;
+}
+
+#editButtonCheckBox:checked ~ #editButtonContent {
+  display: block;
+}
+
+.songElemMenuButton {
+  font-size: 2rem;
+  margin: auto 0;
+  cursor: pointer;
+}
+
+.songInfo {
+  flex: 1;
 }
 
 #ytwrapper {
@@ -260,5 +281,9 @@ main {
 
   .timeInfo {
     display: none;
+  }
+
+  #editButtonContent {
+    top: calc(90vw * 0.5625);
   }
 }

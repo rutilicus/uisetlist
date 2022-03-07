@@ -146,7 +146,7 @@ class SongApp extends React.Component<SongAppProps, SongAppState> {
     this.player.unMute();
   }
 
-  setSongIndex(listIndex) {
+  setSongIndex(listIndex: number) {
     const newSong = this.state.songListList[this.state.currentListIndex].songList[listIndex];
     this.setState({
       currentTime: -1,

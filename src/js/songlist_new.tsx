@@ -11,7 +11,8 @@ interface SongListProps {
   setListIndex(index: number): void;
 }
 interface SongListState {
-
+  songMenuClecked?: boolean;
+  songMenuClickedIndex?: number;
 }
 
 export class SongList extends React.Component<SongListProps, SongListState> {
@@ -20,13 +21,31 @@ export class SongList extends React.Component<SongListProps, SongListState> {
 
     this.onSongElemClick = this.onSongElemClick.bind(this);
     this.onListSelected = this.onListSelected.bind(this);
+    this.onElemMenuClick = this.onElemMenuClick.bind(this);
+    this.onReleaseMenuClicked = this.onReleaseMenuClicked.bind(this);
+
+    this.state = {
+      songMenuClecked: false,
+      songMenuClickedIndex: 0,
+    }
   }
 
-  onSongElemClick(listIndex) {
+  onSongElemClick(listIndex: number) {
     this.props.setSongIndex(listIndex);
   }
 
-  onListSelected(event) {
+  onElemMenuClick(listIndex: number) {
+    this.setState({
+      songMenuClecked: true,
+      songMenuClickedIndex: listIndex,
+    });
+  }
+
+  onReleaseMenuClicked() {
+    this.setState({songMenuClecked: false});
+  }
+
+  onListSelected(event: React.ChangeEvent<HTMLSelectElement>) {
     this.props.setListIndex(parseInt(event.target.value));
   }
 
@@ -83,14 +102,32 @@ export class SongList extends React.Component<SongListProps, SongListState> {
               delayOnTouchOnly={true}
             >
               {this.props.songListList[this.props.currentListIndex].songList.map((song, index) => {
-                return <SongElem 
-                  key={index}
-                  songData={song}
-                  index={index}
-                  onClickListener={this.onSongElemClick}/>;
+                return <div className="songElemWrapper">
+                  <SongElem
+                    key={index}
+                    songData={song}
+                    index={index}
+                    onItemClickListener={this.onSongElemClick}
+                    onMenuClickListener={this.onElemMenuClick} />
+                  {
+                    this.state.songMenuClecked &&
+                    this.state.songMenuClickedIndex == index &&
+                    <div
+                      className="menuContent songListElemMenu">
+                      <ul>
+                        <li>リストに追加</li>
+                      </ul>
+                    </div>
+                  }
+                  </div>;
               })}
             </ReactSortable>
           </div>
+        }
+        { this.state.songMenuClecked &&
+          <div
+            className="checkBoxCover"
+            onClick={this.onReleaseMenuClicked}></div>
         }
       </div>
     );
