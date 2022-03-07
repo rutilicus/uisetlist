@@ -1,5 +1,14 @@
 @charset "utf-8";
 
+body {
+  background-color: #fff;
+  color: #000;
+}
+
+.menuContent {
+  background-color: #fff;
+}
+
 @media (prefers-color-scheme: dark) {
   body {
     background-color: #000;
@@ -7,9 +16,13 @@
   }
 
   .listSelect {
-    background: black;
-    color: white;
+    background-color: #000;
+    color: #fff;
   }
+
+  .menuContent {
+    background-color: #000;
+  }  
 }
 
 .material-icons {
@@ -41,6 +54,8 @@ body {
   margin: 0;
   --line-height-default: 1.5rem;
   line-height: var(--line-height-default);
+  --z-index-cover: 100;
+  --z-index-menu: 101;
 }
 
 .material-icons {
@@ -149,6 +164,52 @@ main {
 
 .listSelect {
   border: 1px solid gray;
+}
+
+.buttonCheckBox {
+  display: none;
+}
+
+.checkBoxCover {
+  position: fixed;
+  top:0;
+  left:0;
+  width: 100vw;
+  height: 100vh;
+  z-index: var(--z-index-cover);
+  opacity: 1;
+}
+
+#editButtonContent {
+  display: none;
+  position: fixed;
+  top: 1rem;
+  right: calc(5vw + 2rem);
+  z-index: var(--z-index-menu);
+  opacity: 1;
+}
+
+#editButtonCheckBox:checked ~ #editButtonCover {
+  display: block;
+}
+
+#editButtonCheckBox:checked ~ #editButtonContent {
+  display: block;
+}
+
+.menuContent {
+  border: solid 1px gray;
+}
+
+.menuContent ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.menuContent ul li {
+  border: 1px solid gray;
+  padding: 0.5rem;
 }
 
 #ytwrapper {

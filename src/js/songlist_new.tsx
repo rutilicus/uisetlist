@@ -40,14 +40,38 @@ export class SongList extends React.Component<SongListProps, SongListState> {
               value={this.props.currentListIndex}
               onChange={this.onListSelected}>
               {this.props.songListList.map((listElem, index) => {
-                return <option value={index.toString()}>
+                return <option
+                  value={index.toString()}
+                  key={index.toString()}>
                   {listElem.name}
                 </option>;
               })}
             </select>
-            <span className="editButtonText">
-              Edit
-            </span>
+            <input
+              id="editButtonCheckBox"
+              className="buttonCheckBox"
+              type="checkbox"></input>
+              <label
+                htmlFor="editButtonCheckBox"
+                className="editButtonText">
+                <span>
+                  Edit
+                </span>
+              </label>
+              <label
+                id="editButtonCover"
+                className="buttonCheckBox checkBoxCover"
+                htmlFor="editButtonCheckBox">
+              </label>
+            <div
+              id="editButtonContent"
+              className="menuContent">
+              <ul>
+                <li>リスト名変更</li>
+                <li>リスト削除</li>
+                <li>新規リスト作成</li>
+              </ul>
+            </div>
           </div>
         }
         { this.props.songListList.length != 0 &&
