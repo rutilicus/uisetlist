@@ -5,6 +5,11 @@
     background-color: #000;
     color: #fff;
   }
+
+  .listSelect {
+    background: black;
+    color: white;
+  }
 }
 
 .material-icons {
@@ -122,6 +127,24 @@ main {
 
 .playerFooter {
   line-height: 0;
+}
+
+.userListEdit {
+  display: flex;
+}
+
+.listSelect {
+  flex: 1;
+  cursor: pointer;
+}
+
+.editButtonText {
+  border: 1px solid gray;
+  padding: .3rem;
+}
+
+.listSelect {
+  border: 1px solid gray;
 }
 
 #ytwrapper {

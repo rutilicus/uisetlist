@@ -1,4 +1,4 @@
-import { SongData, IdSongData, NamedSongList } from "./types"
+import { SongData, IdSongData, NamedSongList, SongDataOld, NamedSongListOld } from "./types"
 import { YTPlayer } from "./ytplayer_new"
 import { SongList } from "./songlist_new"
 import { ControlBar } from "./controlbar_new"
@@ -43,6 +43,8 @@ class SongApp extends React.Component<SongAppProps, SongAppState> {
     this.seekPrev = this.seekPrev.bind(this);
     this.seekTime = this.seekTime.bind(this);
     this.resetCurrentList = this.resetCurrentList.bind(this);
+    this.convertOldUserSongListData = this.convertOldUserSongListData.bind(this);
+    this.setListIndex = this.setListIndex.bind(this);
 
     this.state = {
       songListList: [
@@ -55,18 +57,60 @@ class SongApp extends React.Component<SongAppProps, SongAppState> {
     };
   }
   
+  convertOldUserSongListData(oldData: SongDataOld[]): IdSongData[] {
+    return oldData.map((oldSongData, index) => {
+      return {
+        id: index,
+        time: oldSongData.time,
+        endTime: oldSongData.endTime,
+        songName: oldSongData.songName,
+        artist: oldSongData.writer,
+        movie: {
+          movieId: oldSongData.movieId,
+          name: oldSongData.movieName,
+          date: "",
+        }
+      };
+    });
+  }
+
   async componentDidMount(): Promise<void> {
     const response = await fetch("/api/song", {
       mode: 'no-cors',
     });
-    let allSongList: SongData[] = await response.json();
-    this.setState({
-      songListList: [{
-        name: "全曲一覧",
-        songList: allSongList.map((songData, index) => {
-          return {...songData, ...{id: index}};
-        })}]
-    });
+    const allSongList: SongData[] = await response.json();
+    let songListList = [{
+      name: "全曲一覧",
+      songList: allSongList.map((songData, index) => {
+        return {...songData, ...{id: index}};
+      })}];
+    const userSongListJson = localStorage.getItem("allSongList");
+    if (typeof userSongListJson === "string") {
+      let isOldDataUsed = false;
+      const parsed = JSON.parse(userSongListJson) as any[];
+      parsed.forEach((songList) => {
+        if ("list" in songList) {
+          // 旧バージョン形式のリスト
+          const typed = songList as NamedSongListOld;
+          songListList.push({
+            name: typed.name,
+            songList: this.convertOldUserSongListData(typed.list)
+          });
+          isOldDataUsed = true;
+        } else {
+          // 現行バージョンのリスト
+          const typed = songList as NamedSongList;
+          songListList.push(typed);
+        }
+      });
+      if (isOldDataUsed) {
+        // 旧データ形式を新データ形式にコンバートして
+        // ローカルストレージに保存しなおす
+        localStorage.setItem("allSongList", JSON.stringify(songListList.slice(1)));
+      }
+    }
+
+    this.setState({songListList: songListList});
     return Promise.resolve();
   }
 
@@ -97,7 +141,7 @@ class SongApp extends React.Component<SongAppProps, SongAppState> {
   }
 
   setSongIndex(listIndex) {
-    let newSong = this.state.songListList[this.state.currentListIndex].songList[listIndex];
+    const newSong = this.state.songListList[this.state.currentListIndex].songList[listIndex];
     this.setState({
       currentTime: -1,
       currentSong: newSong
@@ -110,7 +154,7 @@ class SongApp extends React.Component<SongAppProps, SongAppState> {
 
   getPlayerState() {
     if (this.player) {
-      let currentTime = this.player.getCurrentTime ? this.player.getCurrentTime() : -1;
+      const currentTime = this.player.getCurrentTime ? this.player.getCurrentTime() : -1;
       this.setState({
         currentTime: currentTime,
         isMuted: this.player.isMuted && this.player.isMuted()
@@ -134,10 +178,10 @@ class SongApp extends React.Component<SongAppProps, SongAppState> {
   }
 
   seekNext() {
-    let arrayIndex = this.state.songListList[this.state.currentListIndex].songList.findIndex(
+    const arrayIndex = this.state.songListList[this.state.currentListIndex].songList.findIndex(
       (idSongData) => idSongData.id === this.state.currentSong.id
     );
-    let songNum = this.state.songListList[this.state.currentListIndex].songList.length;
+    const songNum = this.state.songListList[this.state.currentListIndex].songList.length;
     if (arrayIndex != -1) {
       switch(this.state.repeatState) {
         case Constants.REPEAT_NONE:
@@ -163,7 +207,7 @@ class SongApp extends React.Component<SongAppProps, SongAppState> {
   }
 
   seekNextForce() {
-    let arrayIndex = this.state.songListList[this.state.currentListIndex].songList.findIndex(
+    const arrayIndex = this.state.songListList[this.state.currentListIndex].songList.findIndex(
       (idSongData) => idSongData.id === this.state.currentSong.id
     );
     if (arrayIndex != -1) {
@@ -178,7 +222,7 @@ class SongApp extends React.Component<SongAppProps, SongAppState> {
   }
 
   seekPrev() {
-    let arrayIndex = this.state.songListList[this.state.currentListIndex].songList.findIndex(
+    const arrayIndex = this.state.songListList[this.state.currentListIndex].songList.findIndex(
       (idSongData) => idSongData.id === this.state.currentSong.id
     );
     if (arrayIndex != -1) {
@@ -200,6 +244,10 @@ class SongApp extends React.Component<SongAppProps, SongAppState> {
     this.setState({songListList: tmp});
   }
 
+  setListIndex(index: number) {
+    this.setState({currentListIndex: index});
+  }
+
   render() {
     return (
       <div>
@@ -210,9 +258,11 @@ class SongApp extends React.Component<SongAppProps, SongAppState> {
               setPlayerState={this.setPlayerState}
               startInterval={this.startInterval}/>
             <SongList
-              allSongList={this.state.songListList[this.state.currentListIndex].songList}
+              songListList={this.state.songListList}
+              currentListIndex={this.state.currentListIndex}
               setSongIndex={this.setSongIndex}
-              resetCurrentList={this.resetCurrentList}/>
+              resetCurrentList={this.resetCurrentList}
+              setListIndex={this.setListIndex}/>
           </div>
           <ControlBar
             currentSong={this.state.currentSong}
