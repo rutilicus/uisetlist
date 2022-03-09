@@ -7,7 +7,7 @@ interface ControlBarProps {
   currentTime?: number;
   playerState?: number;
   isMuted?: boolean;
-  repeatState: number;
+  repeatState: RepeatState;
   playVideo(): void;
   pauseVideo(): void;
   mute(): void;

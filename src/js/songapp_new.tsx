@@ -16,7 +16,7 @@ interface SongAppState {
   currentTime?: number;
   playerState?: number;
   isMuted?: boolean;
-  repeatState?: number;
+  repeatState?: RepeatState;
 }
 
 const SEEK_PREV_TIME_THRES = 5;

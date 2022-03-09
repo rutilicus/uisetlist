@@ -22,6 +22,11 @@ body {
 
   .menuContent {
     background-color: #000;
+  }
+
+  .dialog {
+    background-color: #000;
+    color: white;
   }  
 }
 
@@ -213,13 +218,6 @@ main {
 #editButtonContent {
   top: 1rem;
   right: calc(5vw + 2rem);
-}
-
-#editButtonCheckBox:checked ~ #editButtonCover {
-  display: block;
-}
-
-#editButtonCheckBox:checked ~ #editButtonContent {
   display: block;
 }
 
@@ -231,6 +229,10 @@ main {
 
 .songInfo {
   flex: 1;
+}
+
+.dialog {
+  border: 0;
 }
 
 #ytwrapper {

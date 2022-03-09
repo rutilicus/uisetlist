@@ -2,6 +2,7 @@ import React from "react";
 import { IdSongData, NamedSongList } from "./types"
 import { SongElem } from "./songelem_new"
 import { ReactSortable } from "react-sortablejs";
+import Modal from "react-modal";
 
 interface SongListProps {
   songListList?: NamedSongList[];
@@ -11,8 +12,18 @@ interface SongListProps {
   setListIndex(index: number): void;
 }
 interface SongListState {
-  songMenuClecked?: boolean;
+  listMenuClicked?: boolean;
+  songMenuClicked?: boolean;
   songMenuClickedIndex?: number;
+  modalState?: ModalState;
+}
+
+enum ModalState {
+  MODAL_NONE,
+  MODAL_CREATE,
+  MODAL_RENAME,
+  MODAL_DELETE,
+  MODAL_CREATE_NEW,
 }
 
 export class SongList extends React.Component<SongListProps, SongListState> {
@@ -21,12 +32,18 @@ export class SongList extends React.Component<SongListProps, SongListState> {
 
     this.onSongElemClick = this.onSongElemClick.bind(this);
     this.onListSelected = this.onListSelected.bind(this);
-    this.onElemMenuClick = this.onElemMenuClick.bind(this);
-    this.onReleaseMenuClicked = this.onReleaseMenuClicked.bind(this);
+    this.onSongElemMenuClick = this.onSongElemMenuClick.bind(this);
+    this.onSongElemMenuRelease = this.onSongElemMenuRelease.bind(this);
+    this.displayCreateDialog = this.displayCreateDialog.bind(this);
+    this.closeDialog = this.closeDialog.bind(this);
+    this.onListMenuClick = this.onListMenuClick.bind(this);
+    this.onListMenuRelease = this.onListMenuRelease.bind(this);
 
     this.state = {
-      songMenuClecked: false,
+      listMenuClicked: false,
+      songMenuClicked: false,
       songMenuClickedIndex: 0,
+      modalState: ModalState.MODAL_NONE
     }
   }
 
@@ -34,19 +51,38 @@ export class SongList extends React.Component<SongListProps, SongListState> {
     this.props.setSongIndex(listIndex);
   }
 
-  onElemMenuClick(listIndex: number) {
+  onListMenuClick() {
+    this.setState({ listMenuClicked: true });
+  }
+
+  onListMenuRelease() {
+    this.setState({ listMenuClicked: false });
+  }
+
+  onSongElemMenuClick(listIndex: number) {
     this.setState({
-      songMenuClecked: true,
+      songMenuClicked: true,
       songMenuClickedIndex: listIndex,
     });
   }
 
-  onReleaseMenuClicked() {
-    this.setState({songMenuClecked: false});
+  onSongElemMenuRelease() {
+    this.setState({songMenuClicked: false});
   }
 
   onListSelected(event: React.ChangeEvent<HTMLSelectElement>) {
     this.props.setListIndex(parseInt(event.target.value));
+  }
+
+  displayCreateDialog() {
+    this.setState({
+      listMenuClicked: false,
+      modalState: ModalState.MODAL_CREATE
+    });
+  }
+
+  closeDialog() {
+    this.setState({ modalState: ModalState.MODAL_NONE });
   }
 
   render() {
@@ -66,31 +102,29 @@ export class SongList extends React.Component<SongListProps, SongListState> {
                 </option>;
               })}
             </select>
-            <input
-              id="editButtonCheckBox"
-              className="buttonCheckBox"
-              type="checkbox"></input>
-              <label
-                htmlFor="editButtonCheckBox"
-                className="editButtonText">
-                <span>
-                  Edit
-                </span>
-              </label>
-              <label
-                id="editButtonCover"
-                className="buttonCheckBox checkBoxCover"
-                htmlFor="editButtonCheckBox">
-              </label>
-            <div
-              id="editButtonContent"
-              className="menuContent">
-              <ul>
-                <li>リスト名変更</li>
-                <li>リスト削除</li>
-                <li>新規リスト作成</li>
-              </ul>
-            </div>
+            <span
+              className="editButtonText"
+              onClick={this.onListMenuClick}>
+              Edit
+            </span>
+            { this.state.listMenuClicked &&
+              <div>
+                <div
+                  id="editButtonCover"
+                  className="buttonCheckBox checkBoxCover"
+                  onClick={this.onListMenuRelease}>
+                </div>
+                <div
+                  id="editButtonContent"
+                  className="menuContent">
+                  <ul>
+                    <li>リスト名変更</li>
+                    <li>リスト削除</li>
+                    <li onClick={this.displayCreateDialog}>新規リスト作成</li>
+                  </ul>
+                </div>
+              </div>
+            }
           </div>
         }
         { this.props.songListList.length != 0 &&
@@ -108,9 +142,9 @@ export class SongList extends React.Component<SongListProps, SongListState> {
                     songData={song}
                     index={index}
                     onItemClickListener={this.onSongElemClick}
-                    onMenuClickListener={this.onElemMenuClick} />
+                    onMenuClickListener={this.onSongElemMenuClick} />
                   {
-                    this.state.songMenuClecked &&
+                    this.state.songMenuClicked &&
                     this.state.songMenuClickedIndex == index &&
                     <div
                       className="menuContent songListElemMenu">
@@ -124,11 +158,17 @@ export class SongList extends React.Component<SongListProps, SongListState> {
             </ReactSortable>
           </div>
         }
-        { this.state.songMenuClecked &&
+        { this.state.songMenuClicked &&
           <div
             className="checkBoxCover"
-            onClick={this.onReleaseMenuClicked}></div>
+            onClick={this.onSongElemMenuRelease}></div>
         }
+        <Modal
+          isOpen={this.state.modalState === ModalState.MODAL_CREATE}
+          onRequestClose={this.closeDialog}
+          className="dialog">
+          リスト名を入力してください
+        </Modal>
       </div>
     );
   }
