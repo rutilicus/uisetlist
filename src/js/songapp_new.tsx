@@ -2,7 +2,7 @@ import { SongData, IdSongData, NamedSongList, SongDataOld, NamedSongListOld } fr
 import { YTPlayer } from "./ytplayer_new"
 import { SongList } from "./songlist_new"
 import { ControlBar } from "./controlbar_new"
-import * as Constants from "./constants"
+import { RepeatState } from "./constants"
 import React from "react"
 import ReactDOM from "react-dom"
 
@@ -52,7 +52,7 @@ class SongApp extends React.Component<SongAppProps, SongAppState> {
         {name: "", songList: []}
       ],
       currentListIndex: 0,
-      repeatState: Constants.REPEAT_NONE,
+      repeatState: RepeatState.REPEAT_NONE,
       currentTime: -1,
       isMuted: false
     };
@@ -179,7 +179,7 @@ class SongApp extends React.Component<SongAppProps, SongAppState> {
 
   advanceRepeatState() {
     this.setState({
-      repeatState: (this.state.repeatState + 1) % Constants.REPEAT_ALL_NUM
+      repeatState: (this.state.repeatState + 1) % RepeatState.REPEAT_ALL_NUM
     });
   }
 
@@ -190,22 +190,22 @@ class SongApp extends React.Component<SongAppProps, SongAppState> {
     const songNum = this.state.songListList[this.state.currentListIndex].songList.length;
     if (arrayIndex != -1) {
       switch(this.state.repeatState) {
-        case Constants.REPEAT_NONE:
+        case RepeatState.REPEAT_NONE:
           if (arrayIndex + 1 < songNum) {
             this.setSongIndex(arrayIndex + 1);
           }
           break;
-        case Constants.REPEAT_ALL:
+        case RepeatState.REPEAT_ALL:
           if (arrayIndex + 1 < songNum) {
             this.setSongIndex(arrayIndex + 1);
           } else {
             this.setSongIndex(0);
           }
           break;
-        case Constants.REPEAT_ONE:
+        case RepeatState.REPEAT_ONE:
           this.setSongIndex(arrayIndex);
           break;
-        case Constants.REPEAT_RANDOM:
+        case RepeatState.REPEAT_RANDOM:
           this.setSongIndex(Math.floor(Math.random() * songNum));
           break
       }
@@ -217,7 +217,7 @@ class SongApp extends React.Component<SongAppProps, SongAppState> {
       (idSongData) => idSongData.id === this.state.currentSong.id
     );
     if (arrayIndex != -1) {
-      if (this.state.repeatState === Constants.REPEAT_ONE) {
+      if (this.state.repeatState === RepeatState.REPEAT_ONE) {
         if (arrayIndex + 1 < this.state.songListList[this.state.currentListIndex].songList.length) {
           this.setSongIndex(arrayIndex + 1);
         }

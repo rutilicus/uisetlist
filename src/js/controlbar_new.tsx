@@ -1,6 +1,6 @@
 import React from "react";
 import { SongData } from "./types";
-import * as Constants from "./constants"
+import { RepeatState } from "./constants";
 
 interface ControlBarProps {
   currentSong?: SongData;
@@ -145,22 +145,22 @@ export class ControlBar extends React.Component<ControlBarProps, ControlBarState
                 className="material-icons"
                 onClick={this.props.mute}>volume_up</span>
             }
-            {this.props.repeatState === Constants.REPEAT_NONE &&
+            {this.props.repeatState === RepeatState.REPEAT_NONE &&
               <span
                 className="material-icons disable"
                 onClick={this.advanceRepeatState}>repeat</span>
             }
-            {this.props.repeatState === Constants.REPEAT_ALL &&
+            {this.props.repeatState === RepeatState.REPEAT_ALL &&
               <span
                 className="material-icons"
                 onClick={this.advanceRepeatState}>repeat</span>
             }
-            {this.props.repeatState === Constants.REPEAT_ONE &&
+            {this.props.repeatState === RepeatState.REPEAT_ONE &&
               <span
                 className="material-icons"
                 onClick={this.advanceRepeatState}>repeat_one</span>
             }
-            {this.props.repeatState === Constants.REPEAT_RANDOM &&
+            {this.props.repeatState === RepeatState.REPEAT_RANDOM &&
               <span
                 className="material-icons"
                 onClick={this.advanceRepeatState}>shuffle</span>
