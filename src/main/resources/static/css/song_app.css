@@ -166,17 +166,13 @@ main {
   cursor: pointer;
 }
 
-.editButtonText {
+.buttonText {
   border: 1px solid gray;
   padding: .3rem;
 }
 
 .listSelect {
   border: 1px solid gray;
-}
-
-.buttonCheckBox {
-  display: none;
 }
 
 .checkBoxCover {
@@ -232,7 +228,22 @@ main {
 }
 
 .dialog {
-  border: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.listNameInput {
+  width: 15rem;
+  margin: 1rem;
+}
+
+.deleteListNameDisp {
+  padding: 1rem;
+}
+
+.dialogButtonArea {
+  display: flex;
+  justify-content: space-evenly;
 }
 
 #ytwrapper {

@@ -10,12 +10,18 @@ interface SongListProps {
   setSongIndex(listInedx: number): void;
   resetCurrentList(list: IdSongData[]): void;
   setListIndex(index: number): void;
+  createList(listName: string): void;
+  editCurrentListName(listName: string): void;
+  deleteCurrentList(): void;
+  addSongToList(listIndex: number, newSong: IdSongData): void;
 }
 interface SongListState {
   listMenuClicked?: boolean;
   songMenuClicked?: boolean;
   songMenuClickedIndex?: number;
   modalState?: ModalState;
+  editListName?: string;
+  addListIndex?: number;
 }
 
 enum ModalState {
@@ -23,10 +29,27 @@ enum ModalState {
   MODAL_CREATE,
   MODAL_RENAME,
   MODAL_DELETE,
-  MODAL_CREATE_NEW,
+  MODAL_ADD,
+}
+
+const defaultDialogStyle: ReactModal.Styles = {
+  overlay: {
+    backgroundColor: "rgba(128, 128, 128, 0.75)"
+  },
+  content: {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    border: "1px solid gray",
+    padding: "0",
+    width: "18rem",
+    height: "6rem",
+  }
 }
 
 export class SongList extends React.Component<SongListProps, SongListState> {
+
   constructor(props) {
     super(props);
 
@@ -38,12 +61,23 @@ export class SongList extends React.Component<SongListProps, SongListState> {
     this.closeDialog = this.closeDialog.bind(this);
     this.onListMenuClick = this.onListMenuClick.bind(this);
     this.onListMenuRelease = this.onListMenuRelease.bind(this);
+    this.setEditListName = this.setEditListName.bind(this);
+    this.createList = this.createList.bind(this);
+    this.displayDeleteDialog = this.displayDeleteDialog.bind(this);
+    this.displayRenameDialog = this.displayRenameDialog.bind(this);
+    this.displayAddDialog = this.displayAddDialog.bind(this);
+    this.editListName = this.editListName.bind(this);
+    this.deleteList = this.deleteList.bind(this);
+    this.onAddListSelected = this.onAddListSelected.bind(this);
+    this.addSong = this.addSong.bind(this);
 
     this.state = {
       listMenuClicked: false,
       songMenuClicked: false,
       songMenuClickedIndex: 0,
-      modalState: ModalState.MODAL_NONE
+      modalState: ModalState.MODAL_NONE,
+      editListName: "",
+      addListIndex: 0
     }
   }
 
@@ -74,14 +108,80 @@ export class SongList extends React.Component<SongListProps, SongListState> {
     this.props.setListIndex(parseInt(event.target.value));
   }
 
+  onAddListSelected(event: React.ChangeEvent<HTMLSelectElement>) {
+    this.setState({ addListIndex: parseInt(event.target.value) });
+  }
+
   displayCreateDialog() {
     this.setState({
       listMenuClicked: false,
-      modalState: ModalState.MODAL_CREATE
+      modalState: ModalState.MODAL_CREATE,
+      editListName: ""
+    });
+  }
+
+  displayDeleteDialog() {
+    this.setState({
+      listMenuClicked: false,
+      modalState: ModalState.MODAL_DELETE
+    });
+  }
+
+  displayRenameDialog() {
+    this.setState({
+      listMenuClicked: false,
+      modalState: ModalState.MODAL_RENAME,
+      editListName: this.props.songListList[this.props.currentListIndex].name
+    });
+  }
+
+  displayAddDialog() {
+    if (this.props.songListList.length <= 1) {
+      // 全曲一覧しかない場合は新規にリストを作成してからダイアログ表示
+      this.props.createList("New List");
+    }
+    this.setState({
+      songMenuClicked: false,
+      modalState: ModalState.MODAL_ADD,
+      addListIndex: 0
     });
   }
 
   closeDialog() {
+    this.setState({ modalState: ModalState.MODAL_NONE });
+  }
+
+  setEditListName(event: React.ChangeEvent<HTMLInputElement>) {
+    this.setState({ editListName: event.target.value });
+  }
+
+  createList() {
+    this.props.createList(this.state.editListName);
+    this.setState({
+      editListName: "",
+      modalState: ModalState.MODAL_NONE
+    });
+  }
+
+  editListName() {
+    this.props.editCurrentListName(this.state.editListName);
+    this.setState({
+      editListName: "",
+      modalState: ModalState.MODAL_NONE
+    });
+  }
+
+  deleteList() {
+    this.props.deleteCurrentList();
+    this.setState({ modalState: ModalState.MODAL_NONE });
+  }
+
+  addSong() {
+    // 全曲一覧を省いたリストのため、インデックスには1を足す
+    this.props.addSongToList(
+      this.state.addListIndex + 1,
+      this.props.songListList[this.props.currentListIndex]
+      .songList[this.state.songMenuClickedIndex]);
     this.setState({ modalState: ModalState.MODAL_NONE });
   }
 
@@ -103,7 +203,7 @@ export class SongList extends React.Component<SongListProps, SongListState> {
               })}
             </select>
             <span
-              className="editButtonText"
+              className="buttonText"
               onClick={this.onListMenuClick}>
               Edit
             </span>
@@ -111,15 +211,25 @@ export class SongList extends React.Component<SongListProps, SongListState> {
               <div>
                 <div
                   id="editButtonCover"
-                  className="buttonCheckBox checkBoxCover"
+                  className="checkBoxCover"
                   onClick={this.onListMenuRelease}>
                 </div>
                 <div
                   id="editButtonContent"
                   className="menuContent">
                   <ul>
-                    <li>リスト名変更</li>
-                    <li>リスト削除</li>
+                    {this.props.currentListIndex == 0 &&
+                      <li className="disable">リスト名変更</li>
+                    }
+                    {this.props.currentListIndex != 0 &&
+                      <li onClick={this.displayRenameDialog}>リスト名変更</li>
+                    }
+                    {this.props.currentListIndex == 0 &&
+                      <li className="disable">リスト削除</li>
+                    }
+                    {this.props.currentListIndex != 0 &&
+                      <li onClick={this.displayDeleteDialog}>リスト削除</li>
+                    }
                     <li onClick={this.displayCreateDialog}>新規リスト作成</li>
                   </ul>
                 </div>
@@ -149,7 +259,7 @@ export class SongList extends React.Component<SongListProps, SongListState> {
                     <div
                       className="menuContent songListElemMenu">
                       <ul>
-                        <li>リストに追加</li>
+                        <li onClick={this.displayAddDialog}>リストに追加</li>
                       </ul>
                     </div>
                   }
@@ -166,8 +276,115 @@ export class SongList extends React.Component<SongListProps, SongListState> {
         <Modal
           isOpen={this.state.modalState === ModalState.MODAL_CREATE}
           onRequestClose={this.closeDialog}
-          className="dialog">
-          リスト名を入力してください
+          style={defaultDialogStyle}>
+          <div className="dialog">
+            <input
+              className="listNameInput"
+              type="text"
+              value={this.state.editListName}
+              onChange={this.setEditListName}
+              placeholder="リスト名を入力してください" />
+            <div className="dialogButtonArea">
+              <span
+                className="buttonText"
+                onClick={this.closeDialog}>
+                キャンセル
+              </span>
+              <span
+                className="buttonText"
+                onClick={this.createList}>
+                OK
+              </span>
+            </div>
+          </div>
+        </Modal>
+        <Modal
+          isOpen={this.state.modalState === ModalState.MODAL_RENAME}
+          onRequestClose={this.closeDialog}
+          style={defaultDialogStyle}>
+          <div className="dialog">
+            <input
+              className="listNameInput"
+              type="text"
+              value={this.state.editListName}
+              onChange={this.setEditListName}
+              placeholder="リスト名を入力してください" />
+            <div className="dialogButtonArea">
+              <span
+                className="buttonText"
+                onClick={this.closeDialog}>
+                キャンセル
+              </span>
+              <span
+                className="buttonText"
+                onClick={this.editListName}>
+                OK
+              </span>
+            </div>
+          </div>
+        </Modal>
+        <Modal
+          isOpen={this.state.modalState === ModalState.MODAL_DELETE}
+          onRequestClose={this.closeDialog}
+          style={{
+            overlay: defaultDialogStyle.overlay,
+            content: Object.assign(
+              defaultDialogStyle.content,
+              { height: "8rem" })
+          }}>
+          <div className="dialog">
+            <div className="deleteListNameDisp">
+              <div>
+                {this.props.songListList[this.props.currentListIndex].name}
+              </div>
+              <div>
+                を削除してもよろしいですか？
+              </div>
+            </div>
+            <div className="dialogButtonArea">
+              <span
+                className="buttonText"
+                onClick={this.closeDialog}>
+                キャンセル
+              </span>
+              <span
+                className="buttonText"
+                onClick={this.deleteList}>
+                削除する
+              </span>
+            </div>
+          </div>
+        </Modal>
+        <Modal
+          isOpen={this.state.modalState === ModalState.MODAL_ADD}
+          onRequestClose={this.closeDialog}
+          style={defaultDialogStyle}>
+          <div className="dialog">
+            <select
+              className="listNameInput"
+              value={this.state.addListIndex}
+              onChange={this.onAddListSelected}>
+              {this.props.songListList.slice(1).map((listElem, index) => {
+                return <option
+                  value={index.toString()}
+                  key={index.toString()}>
+                  {listElem.name}
+                </option>;
+              })}
+            </select>
+            <div className="dialogButtonArea">
+              <span
+                className="buttonText"
+                onClick={this.closeDialog}>
+                キャンセル
+              </span>
+              <span
+                className="buttonText"
+                onClick={this.addSong}>
+                OK
+              </span>
+            </div>
+          </div>
         </Modal>
       </div>
     );

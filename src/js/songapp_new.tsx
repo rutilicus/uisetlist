@@ -46,6 +46,10 @@ class SongApp extends React.Component<SongAppProps, SongAppState> {
     this.convertOldUserSongListData = this.convertOldUserSongListData.bind(this);
     this.setListIndex = this.setListIndex.bind(this);
     this.saveUserSongList = this.saveUserSongList.bind(this);
+    this.createList = this.createList.bind(this);
+    this.editCurrentListName = this.editCurrentListName.bind(this);
+    this.deleteCurrentList = this.deleteCurrentList.bind(this);
+    this.addSongToList = this.addSongToList.bind(this);
 
     this.state = {
       songListList: [
@@ -257,6 +261,37 @@ class SongApp extends React.Component<SongAppProps, SongAppState> {
     this.setState({currentListIndex: index});
   }
 
+  createList(listName: string) {
+    let tmp = this.state.songListList.slice();
+    tmp.push({name: listName, songList: []});
+    this.setState({songListList: tmp});
+    this.saveUserSongList(tmp);
+  }
+
+  editCurrentListName(listName: string) {
+    let tmp = this.state.songListList.slice();
+    tmp[this.state.currentListIndex].name = listName;
+    this.setState({songListList: tmp});
+    this.saveUserSongList(tmp);
+  }
+
+  deleteCurrentList() {
+    let tmp = this.state.songListList.slice();
+    tmp.splice(this.state.currentListIndex, 1);
+    this.setState({
+      songListList: tmp,
+      currentListIndex: 0
+    });
+    this.saveUserSongList(tmp);
+  }
+
+  addSongToList(listIndex: number, newSong: IdSongData) {
+    let tmp = this.state.songListList.slice();
+    tmp[listIndex].songList.push(newSong);
+    this.setState({songListList: tmp});
+    this.saveUserSongList(tmp);
+  }
+
   render() {
     return (
       <div>
@@ -271,7 +306,11 @@ class SongApp extends React.Component<SongAppProps, SongAppState> {
               currentListIndex={this.state.currentListIndex}
               setSongIndex={this.setSongIndex}
               resetCurrentList={this.resetCurrentList}
-              setListIndex={this.setListIndex}/>
+              setListIndex={this.setListIndex}
+              createList={this.createList}
+              editCurrentListName={this.editCurrentListName}
+              deleteCurrentList={this.deleteCurrentList}
+              addSongToList={this.addSongToList}/>
           </div>
           <ControlBar
             currentSong={this.state.currentSong}
