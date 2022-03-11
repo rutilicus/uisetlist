@@ -50,6 +50,7 @@ class SongApp extends React.Component<SongAppProps, SongAppState> {
     this.editCurrentListName = this.editCurrentListName.bind(this);
     this.deleteCurrentList = this.deleteCurrentList.bind(this);
     this.addSongToList = this.addSongToList.bind(this);
+    this.deleteSongFromList = this.deleteSongFromList.bind(this);
 
     this.state = {
       songListList: [
@@ -299,6 +300,13 @@ class SongApp extends React.Component<SongAppProps, SongAppState> {
     this.saveUserSongList(tmp);
   }
 
+  deleteSongFromList(songIndex: number) {
+    let tmp = this.state.songListList.slice();
+    tmp[this.state.currentListIndex].songList.splice(songIndex, 1);
+    this.setState({songListList: tmp});
+    this.saveUserSongList(tmp);
+  }
+
   render() {
     return (
       <div>
@@ -317,7 +325,8 @@ class SongApp extends React.Component<SongAppProps, SongAppState> {
               createList={this.createList}
               editCurrentListName={this.editCurrentListName}
               deleteCurrentList={this.deleteCurrentList}
-              addSongToList={this.addSongToList}/>
+              addSongToList={this.addSongToList}
+              deleteSongFromList={this.deleteSongFromList}/>
           </div>
           <ControlBar
             currentSong={this.state.currentSong}

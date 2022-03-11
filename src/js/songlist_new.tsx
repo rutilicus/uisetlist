@@ -14,6 +14,7 @@ interface SongListProps {
   editCurrentListName(listName: string): void;
   deleteCurrentList(): void;
   addSongToList(listIndex: number, newSong: IdSongData): void;
+  deleteSongFromList(songIndex: number): void;
 }
 interface SongListState {
   listMenuClicked?: boolean;
@@ -30,6 +31,7 @@ enum ModalState {
   MODAL_RENAME,
   MODAL_DELETE,
   MODAL_ADD,
+  MODAL_DELETE_ELEM,
 }
 
 const defaultDialogStyle: ReactModal.Styles = {
@@ -66,10 +68,12 @@ export class SongList extends React.Component<SongListProps, SongListState> {
     this.displayDeleteDialog = this.displayDeleteDialog.bind(this);
     this.displayRenameDialog = this.displayRenameDialog.bind(this);
     this.displayAddDialog = this.displayAddDialog.bind(this);
+    this.displayDeleteElemDialog = this.displayDeleteElemDialog.bind(this);
     this.editListName = this.editListName.bind(this);
     this.deleteList = this.deleteList.bind(this);
     this.onAddListSelected = this.onAddListSelected.bind(this);
     this.addSong = this.addSong.bind(this);
+    this.deleteSong = this.deleteSong.bind(this);
 
     this.state = {
       listMenuClicked: false,
@@ -147,6 +151,13 @@ export class SongList extends React.Component<SongListProps, SongListState> {
     });
   }
 
+  displayDeleteElemDialog() {
+    this.setState({
+      songMenuClicked: false,
+      modalState: ModalState.MODAL_DELETE_ELEM,
+    });
+  }
+
   closeDialog() {
     this.setState({ modalState: ModalState.MODAL_NONE });
   }
@@ -182,6 +193,11 @@ export class SongList extends React.Component<SongListProps, SongListState> {
       this.state.addListIndex + 1,
       this.props.songListList[this.props.currentListIndex]
       .songList[this.state.songMenuClickedIndex]);
+    this.setState({ modalState: ModalState.MODAL_NONE });
+  }
+
+  deleteSong() {
+    this.props.deleteSongFromList(this.state.songMenuClickedIndex);
     this.setState({ modalState: ModalState.MODAL_NONE });
   }
 
@@ -260,6 +276,12 @@ export class SongList extends React.Component<SongListProps, SongListState> {
                       className="menuContent songListElemMenu">
                       <ul>
                         <li onClick={this.displayAddDialog}>リストに追加</li>
+                        {this.props.currentListIndex == 0 &&
+                          <li className="disable">削除</li>
+                        }
+                        {this.props.currentListIndex != 0 &&
+                          <li onClick={this.displayDeleteElemDialog}>削除</li>
+                        }
                       </ul>
                     </div>
                   }
@@ -382,6 +404,42 @@ export class SongList extends React.Component<SongListProps, SongListState> {
                 className="buttonText"
                 onClick={this.addSong}>
                 OK
+              </span>
+            </div>
+          </div>
+        </Modal>
+        <Modal
+          isOpen={this.state.modalState === ModalState.MODAL_DELETE_ELEM}
+          onRequestClose={this.closeDialog}
+          style={{
+            overlay: defaultDialogStyle.overlay,
+            content: Object.assign(
+              defaultDialogStyle.content,
+              { height: "8rem" })
+          }}>
+          <div className="dialog">
+            <div className="deleteListNameDisp">
+              <div>
+                {this.props.songListList[this.props.currentListIndex] &&
+                  this.props.songListList[this.props.currentListIndex]
+                  .songList[this.state.songMenuClickedIndex] &&
+                  this.props.songListList[this.props.currentListIndex]
+                  .songList[this.state.songMenuClickedIndex].songName}
+              </div>
+              <div>
+                を削除してもよろしいですか？
+              </div>
+            </div>
+            <div className="dialogButtonArea">
+              <span
+                className="buttonText"
+                onClick={this.closeDialog}>
+                キャンセル
+              </span>
+              <span
+                className="buttonText"
+                onClick={this.deleteSong}>
+                削除する
               </span>
             </div>
           </div>
