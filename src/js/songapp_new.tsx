@@ -109,15 +109,16 @@ class SongApp extends React.Component<SongAppProps, SongAppState> {
           isOldDataUsed = true;
         } else {
           // 現行バージョンのリスト
-          const typed = songList as NamedSongList;
+          let typed = songList as NamedSongList;
+          // 普通に使っていればIDが枯渇することはないが、一応振り直す
+          for (let i = 0; i < typed.songList.length; i++) {
+            typed.songList[i].id = i;
+          }
           songListList.push(typed);
         }
       });
-      if (isOldDataUsed) {
-        // 旧データ形式を新データ形式にコンバートして
-        // ローカルストレージに保存しなおす
-        this.saveUserSongList(songListList);
-      }
+      // データのコンバート、またはID振り直しがあるため一度保存する
+      this.saveUserSongList(songListList);
     }
 
     this.setState({songListList: songListList});
@@ -286,8 +287,14 @@ class SongApp extends React.Component<SongAppProps, SongAppState> {
   }
 
   addSongToList(listIndex: number, newSong: IdSongData) {
+    let addElem = Object.assign({}, newSong);
+    addElem.movie = Object.assign({}, newSong.movie);
     let tmp = this.state.songListList.slice();
-    tmp[listIndex].songList.push(newSong);
+    addElem.id =
+      tmp[listIndex].songList.length ? 
+      Math.max(...tmp[listIndex].songList.map((e) => e.id)) + 1 :
+      0;
+    tmp[listIndex].songList.push(addElem);
     this.setState({songListList: tmp});
     this.saveUserSongList(tmp);
   }
