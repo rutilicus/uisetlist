@@ -137,6 +137,7 @@ main {
   margin: auto;
   overflow: hidden hidden;
   max-width: calc(100vw - 23rem);
+  white-space: nowrap;
 }
 
 .timeInfo {
