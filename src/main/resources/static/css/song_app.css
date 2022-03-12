@@ -169,10 +169,17 @@ main {
 .buttonText {
   border: 1px solid gray;
   padding: .3rem;
+  text-align: center;
+  cursor: pointer;
+}
+
+.editButton {
+  width: 2.7rem;
 }
 
 .listSelect {
   border: 1px solid gray;
+  width: calc(100% - 2.7rem - 2px);
 }
 
 .checkBoxCover {
@@ -209,6 +216,7 @@ main {
 .menuContent ul li {
   border: 1px solid gray;
   padding: 0.5rem;
+  cursor: pointer;
 }
 
 #editButtonContent {
@@ -230,20 +238,29 @@ main {
 .dialog {
   width: 100%;
   height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.dialogText {
+  white-space: nowrap;
 }
 
 .listNameInput {
   width: 15rem;
   margin: 1rem;
+  margin: auto;
 }
 
 .deleteListNameDisp {
-  padding: 1rem;
+  margin: auto;
 }
 
 .dialogButtonArea {
   display: flex;
   justify-content: space-evenly;
+  margin: auto 0 auto;
 }
 
 #ytwrapper {

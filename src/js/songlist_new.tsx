@@ -219,7 +219,7 @@ export class SongList extends React.Component<SongListProps, SongListState> {
               })}
             </select>
             <span
-              className="buttonText"
+              className="buttonText editButton"
               onClick={this.onListMenuClick}>
               Edit
             </span>
@@ -357,10 +357,14 @@ export class SongList extends React.Component<SongListProps, SongListState> {
           <div className="dialog">
             <div className="deleteListNameDisp">
               <div>
-                {this.props.songListList[this.props.currentListIndex].name}
+                <span className="dialogText">
+                  {this.props.songListList[this.props.currentListIndex].name}
+                </span>
               </div>
               <div>
-                を削除してもよろしいですか？
+                <span className="dialogText">
+                  を削除してもよろしいですか？
+                </span>
               </div>
             </div>
             <div className="dialogButtonArea">
@@ -420,14 +424,18 @@ export class SongList extends React.Component<SongListProps, SongListState> {
           <div className="dialog">
             <div className="deleteListNameDisp">
               <div>
-                {this.props.songListList[this.props.currentListIndex] &&
-                  this.props.songListList[this.props.currentListIndex]
-                  .songList[this.state.songMenuClickedIndex] &&
-                  this.props.songListList[this.props.currentListIndex]
-                  .songList[this.state.songMenuClickedIndex].songName}
+                <span className="dialogText">
+                  {this.props.songListList[this.props.currentListIndex] &&
+                    this.props.songListList[this.props.currentListIndex]
+                      .songList[this.state.songMenuClickedIndex] &&
+                    this.props.songListList[this.props.currentListIndex]
+                      .songList[this.state.songMenuClickedIndex].songName}
+                </span>
               </div>
               <div>
-                を削除してもよろしいですか？
+                <span className="dialogText">
+                  を削除してもよろしいですか？
+                </span>
               </div>
             </div>
             <div className="dialogButtonArea">
