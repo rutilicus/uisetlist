@@ -233,6 +233,7 @@ main {
 
 .songInfo {
   flex: 1;
+  cursor: default;
 }
 
 .dialog {
