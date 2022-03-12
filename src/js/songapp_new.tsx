@@ -24,6 +24,7 @@ const SEEK_PREV_TIME_THRES = 5;
 class SongApp extends React.Component<SongAppProps, SongAppState> {
   player: YT.Player;
   inervalId = 0;
+  baseTitle = "";
 
   constructor(props) {
     super(props);
@@ -123,6 +124,9 @@ class SongApp extends React.Component<SongAppProps, SongAppState> {
     }
 
     this.setState({songListList: songListList});
+
+    this.baseTitle = document.title;
+
     return Promise.resolve();
   }
 
@@ -162,6 +166,8 @@ class SongApp extends React.Component<SongAppProps, SongAppState> {
       videoId: newSong.movie.movieId,
       startSeconds: newSong.time
     });
+
+    document.title = newSong.songName + " - " + this.baseTitle;
   }
 
   getPlayerState() {
