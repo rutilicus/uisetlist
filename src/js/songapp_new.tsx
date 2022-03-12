@@ -205,6 +205,10 @@ class SongApp extends React.Component<SongAppProps, SongAppState> {
         case RepeatState.REPEAT_NONE:
           if (arrayIndex + 1 < songNum) {
             this.setSongIndex(arrayIndex + 1);
+          } else {
+            // リスト終端での再生終了のため停止させる
+            this.pauseVideo();
+            document.title = this.baseTitle;
           }
           break;
         case RepeatState.REPEAT_ALL:
