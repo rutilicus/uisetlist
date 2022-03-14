@@ -14,7 +14,7 @@
         </thead>
         <tbody>
         <tr th:each="movie : ${movies}">
-            <td><a th:href="'/movie/' + ${movie.movieId}" th:text="${movie.name}"></a></td>
+            <td th:text="${movie.name}"></td>
             <td th:text="${#dates.format(movie.date, 'yyyy/MM/dd')}"></td>
             <th:block th:if="${admin}">
                 <td><input type="button" value="Edit"

@@ -15,10 +15,9 @@
         </thead>
         <tbody>
         <tr th:each="song : ${songs}">
-            <td><a th:href="'/movie/' + ${song.movie.movieId} + '?time=' + ${song.time}"
-                   th:text="${song.songName}"></a></td>
+            <td th:text="${song.songName}"></td>
             <td th:text="${song.writer}"></td>
-            <td><a th:href="'/movie/' + ${song.movie.movieId}" th:text="${song.movie.name}"></a></td>
+            <td th:text="${song.movie.name}"></td>
             <th:block th:if="${admin}">
                 <td><input type="button" value="Edit"
                            th:movieId="${song.movie.movieId}"

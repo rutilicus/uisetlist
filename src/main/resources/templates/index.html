@@ -1,18 +1,20 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-    <head>
-        <meta charset="UTF-8" http-equiv="Content-Type" content="text/html" />
-        <th:block th:each="metaTag : ${metaTags}">
-            <meta th:name="${metaTag.name}" th:content="${metaTag.content}" />
-        </th:block>
-        <title th:text="|${appName} - 動画一覧|"></title>
-    </head>
-    <body>
-        <th:block th:insert="layout::header" />
-        <main>
-            <center>
-                <th:block th:insert="movieListFragment::movieList(${movies})" />
-            </center>
-        </main>
-    </body>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <th:block th:each="metaTag : ${metaTags}">
+    <meta th:name="${metaTag.name}" th:content="${metaTag.content}" />
+  </th:block>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" th:href="@{/css/song_app.css}">
+  <title th:text="|${appName}|"></title>
+</head>
+
+<body class="songApp">
+  <div id="wrapper"></div>
+  <script type="module" th:src="@{/js/songapp_main.js}"></script>
+</body>
+
 </html>

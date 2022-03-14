@@ -24,7 +24,6 @@
     "sortablejs": "^1.14.0"
   },
   "scripts": {
-    "babel": "babel src/js --extensions=\".ts\",\".tsx\",\".js\" --out-dir src/main/resources/static/js --presets=@babel/preset-react,@babel/preset-typescript",
     "webpack": "webpack"
   },
   "private": true

@@ -1,63 +1,17 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-    <head>
-        <meta charset="UTF-8" http-equiv="Content-Type" content="text/html" />
-        <title th:text="|${appName} - お歌一覧|"></title>
-        <style>
-            .wrapper { display: flex; }
-            .mainSticky { flex: 1; position: sticky; top: 0px; align-self: baseline; }
-            .mainNonSticky { flex: 1; top: 0px; align-self: baseline; }
-            .aside { flex: 2; }
-            .artist { font-size: small; }
-            .movieName { font-size: small; }
-            .controlButtons { text-align: left; display: inline-block; }
-            .songTbl { margin: 0 auto; }
-            .player { text-align: center; }
-            .songListSelect { margin-left: auto; margin-right: auto; display: block; }
-            .modeTbl { margin: 0 auto; }
-            .listNameEdit { text-align: center; }
-        </style>
-    </head>
-    <body>
-        <th:block th:insert="layout::header" />
-        <div id="wrapper"></div>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
 
-        <!-- Load React. -->
-        <script src="https://unpkg.com/react@16/umd/react.production.min.js" crossorigin></script>
-        <script src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js" crossorigin></script>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" th:href="@{/css/song_app.css}">
+  <title th:text="|${appName}|"></title>
+</head>
 
-        <!-- Load our React component. -->
-        <script th:src="@{/js/player.js}"></script>
-        <script th:src="@{/js/songelem.js}"></script>
-        <script th:src="@{/js/songlist.js}"></script>
-        <script th:src="@{/js/editlist.js}"></script>
-        <script th:src="@{/js/songapp.js}"></script>
+<body class="songApp">
+  <div id="wrapper"></div>
+  <script type="module" th:src="@{/js/songapp_main.js}"></script>
+</body>
 
-        <script th:inline="javascript">
-            /*<![CDATA[*/
-            let songInfo = [
-                /*[# th:each="song : ${songs}"]*/
-                {movieId: /*[[${song.movieId}]]*/,
-                 time: /*[[${song.time}]]*/,
-                 songName: /*[[${song.songName}]]*/,
-                 writer: /*[[${song.writer}]]*/,
-                 movieName: /*[[${song.movie.name}]]*/,
-                 endTime: /*[[${song.endTime}]]*/},
-                /*[/]*/
-            ];
-
-            /* DOM生成 */
-            let songAppComponent =
-                ReactDOM.render(
-                    React.createElement(
-                        SongApp,
-                        {allSongs:songInfo,
-                         defaultId: /*[[${id}]]*/ 'null',
-                         defaultTime: /*[[${time}]]*/ 0}
-                    ),
-                    document.querySelector("#wrapper")
-            );
-            /*]]>*/
-        </script>
-    </body>
 </html>

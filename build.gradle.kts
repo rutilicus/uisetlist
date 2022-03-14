@@ -52,7 +52,7 @@ tasks {
 		})
 	}
 	register("npm") {
-		dependsOn("npm_run_webpack", "npm_run_babel", "cleanAutoGen")
+		dependsOn("npm_run_webpack", "cleanAutoGen")
 		mustRunAfter("cleanAutoGen")
 	}
 	named<BootRun>("bootRun") {

@@ -3,7 +3,6 @@ package com.rutilicus.uisetlist.controller
 import com.rutilicus.uisetlist.Commons
 import com.rutilicus.uisetlist.service.MetaTagsService
 import com.rutilicus.uisetlist.service.MovieService
-import com.rutilicus.uisetlist.service.SongService
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
@@ -16,18 +15,16 @@ import javax.servlet.http.HttpServletRequest
 @Controller
 @RequestMapping("/")
 class IndexController(val movieService: MovieService,
-                      val metaTagsService: MetaTagsService,
-                      val songService: SongService) {
+                      val metaTagsService: MetaTagsService) {
     @GetMapping("/")
     fun movie(model: Model): String {
-        model.addAttribute("movies", movieService.findAll())
         model.addAttribute("metaTags", metaTagsService.findAll())
         return "index"
     }
 
     @GetMapping("/song")
     fun song(builder: UriComponentsBuilder): String {
-        return "redirect:" + Commons.getPathUriString(builder, "/song/")
+        return "redirect:" + Commons.getPathUriString(builder, "/")
     }
 
     @GetMapping("/admin")
@@ -44,7 +41,6 @@ class IndexController(val movieService: MovieService,
     @ResponseBody
     fun siteMap(request: HttpServletRequest): String {
         // 更新日取得のため、データ一覧を取得
-        val songs = songService.findAll()
         val movies = movieService.findAll()
 
         var ret = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
@@ -52,12 +48,6 @@ class IndexController(val movieService: MovieService,
         ret += "<url>"
         ret += "<loc>${request.scheme}://${request.serverName}/</loc>"
         ret += "<lastmod>${if (movies.isNotEmpty()) movies[0].date.toString() else "1970-01-01"}</lastmod>"
-        ret += "<changefreq>weekly</changefreq>"
-        ret += "<priority>1.0</priority>"
-        ret += "</url>"
-        ret += "<url>"
-        ret += "<loc>${request.scheme}://${request.serverName}/song/</loc>"
-        ret += "<lastmod>${if (songs.isNotEmpty()) songs[0].movie.date.toString() else "1970-01-01"}</lastmod>"
         ret += "<changefreq>weekly</changefreq>"
         ret += "<priority>1.0</priority>"
         ret += "</url>"

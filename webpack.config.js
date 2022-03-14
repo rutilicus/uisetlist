@@ -1,7 +1,7 @@
 module.exports = {
   mode: "production",
 
-  entry: "./src/js/songapp_new.tsx",
+  entry: "./src/js/songapp.tsx",
 
   resolve: {
     extensions: [".ts", ".tsx", ".js"]

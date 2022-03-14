@@ -1,6 +1,6 @@
 import React from "react";
 import { IdSongData, NamedSongList } from "./types"
-import { SongElem } from "./songelem_new"
+import { SongElem } from "./songelem"
 import { ReactSortable } from "react-sortablejs";
 import Modal from "react-modal";
 
