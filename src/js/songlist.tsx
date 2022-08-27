@@ -74,6 +74,7 @@ export class SongList extends React.Component<SongListProps, SongListState> {
     this.onAddListSelected = this.onAddListSelected.bind(this);
     this.addSong = this.addSong.bind(this);
     this.deleteSong = this.deleteSong.bind(this);
+    this.exportUserList = this.exportUserList.bind(this);
 
     this.state = {
       listMenuClicked: false,
@@ -201,6 +202,19 @@ export class SongList extends React.Component<SongListProps, SongListState> {
     this.setState({ modalState: ModalState.MODAL_NONE });
   }
 
+  exportUserList() {
+    const userSongListJson = localStorage.getItem("allSongList");
+    if (typeof userSongListJson === "string") {
+      const blob = new Blob([userSongListJson], { type: "application/json" });
+      let dummyElem = document.createElement("a");
+      document.body.appendChild(dummyElem);
+      dummyElem.href = window.URL.createObjectURL(blob);
+      dummyElem.download = "uisetlist.json";
+      dummyElem.click();
+      document.body.removeChild(dummyElem);
+    }
+  }
+
   render() {
     return(
       <div className="songList">
@@ -247,6 +261,9 @@ export class SongList extends React.Component<SongListProps, SongListState> {
                       <li onClick={this.displayDeleteDialog}>リスト削除</li>
                     }
                     <li onClick={this.displayCreateDialog}>新規リスト作成</li>
+                    {this.props.songListList.length != 1 &&
+                      <li onClick={this.exportUserList}>Export</li>
+                    }
                   </ul>
                 </div>
               </div>
