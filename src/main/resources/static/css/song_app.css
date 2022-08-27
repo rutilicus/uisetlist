@@ -275,6 +275,10 @@ main {
   height: 100%;
 }
 
+#importFile {
+  display: none;
+}
+
 @media screen and (max-width: 935px) {
   .playerMain {
     flex-direction: column;

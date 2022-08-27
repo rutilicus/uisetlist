@@ -52,6 +52,7 @@ class SongApp extends React.Component<SongAppProps, SongAppState> {
     this.deleteCurrentList = this.deleteCurrentList.bind(this);
     this.addSongToList = this.addSongToList.bind(this);
     this.deleteSongFromList = this.deleteSongFromList.bind(this);
+    this.concatSongList = this.concatSongList.bind(this);
 
     this.state = {
       songListList: [
@@ -98,7 +99,6 @@ class SongApp extends React.Component<SongAppProps, SongAppState> {
       })}];
     const userSongListJson = localStorage.getItem("allSongList");
     if (typeof userSongListJson === "string") {
-      let isOldDataUsed = false;
       const parsed = JSON.parse(userSongListJson) as any[];
       parsed.forEach((songList) => {
         if ("list" in songList) {
@@ -108,7 +108,6 @@ class SongApp extends React.Component<SongAppProps, SongAppState> {
             name: typed.name,
             songList: this.convertOldUserSongListData(typed.list)
           });
-          isOldDataUsed = true;
         } else {
           // 現行バージョンのリスト
           let typed = songList as NamedSongList;
@@ -317,6 +316,12 @@ class SongApp extends React.Component<SongAppProps, SongAppState> {
     this.saveUserSongList(tmp);
   }
 
+  concatSongList(list: NamedSongList[]) {
+    let tmp = this.state.songListList.slice().concat(list);
+    this.setState({songListList: tmp});
+    this.saveUserSongList(tmp);
+  }
+
   render() {
     return (
       <div>
@@ -336,7 +341,8 @@ class SongApp extends React.Component<SongAppProps, SongAppState> {
               editCurrentListName={this.editCurrentListName}
               deleteCurrentList={this.deleteCurrentList}
               addSongToList={this.addSongToList}
-              deleteSongFromList={this.deleteSongFromList}/>
+              deleteSongFromList={this.deleteSongFromList}
+              concatSongList={this.concatSongList}/>
           </div>
           <ControlBar
             currentSong={this.state.currentSong}

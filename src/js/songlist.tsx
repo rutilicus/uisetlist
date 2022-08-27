@@ -15,6 +15,7 @@ interface SongListProps {
   deleteCurrentList(): void;
   addSongToList(listIndex: number, newSong: IdSongData): void;
   deleteSongFromList(songIndex: number): void;
+  concatSongList(list: NamedSongList[]): void;
 }
 interface SongListState {
   listMenuClicked?: boolean;
@@ -75,6 +76,8 @@ export class SongList extends React.Component<SongListProps, SongListState> {
     this.addSong = this.addSong.bind(this);
     this.deleteSong = this.deleteSong.bind(this);
     this.exportUserList = this.exportUserList.bind(this);
+    this.importUserList = this.importUserList.bind(this);
+    this.fireImport = this.fireImport.bind(this);
 
     this.state = {
       listMenuClicked: false,
@@ -215,6 +218,32 @@ export class SongList extends React.Component<SongListProps, SongListState> {
     }
   }
 
+  importUserList(e: React.ChangeEvent<HTMLInputElement>) {
+    if (e.target.files.length != 0) {
+      const file = e.target.files[0];
+      const render = new FileReader();
+      render.onload = () => {
+        if (typeof render.result === "string") {
+          let tmp = [];
+          const parsed = JSON.parse(render.result) as NamedSongList[];
+          parsed.forEach((songList) => {
+            // 初期読み込み時同様ID振り直し
+            for (let i = 0; i < songList.songList.length; i++) {
+              songList.songList[i].id = i;
+            }
+            tmp.push(songList);
+          })
+          this.props.concatSongList(tmp);
+        }
+      }
+      render.readAsText(file);
+    }
+  }
+
+  fireImport() {
+    document.getElementById("importFile").click();
+  }
+
   render() {
     return(
       <div className="songList">
@@ -264,6 +293,14 @@ export class SongList extends React.Component<SongListProps, SongListState> {
                     {this.props.songListList.length != 1 &&
                       <li onClick={this.exportUserList}>Export</li>
                     }
+                    <li onClick={this.fireImport}>
+                      Import
+                      <input
+                        type="file"
+                        id="importFile"
+                        accept="application/json"
+                        onChange={this.importUserList}/>
+                    </li>
                   </ul>
                 </div>
               </div>
