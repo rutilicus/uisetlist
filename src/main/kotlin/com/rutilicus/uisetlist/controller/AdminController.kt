@@ -64,6 +64,7 @@ class AdminController(val movieService: MovieService,
 
     @GetMapping("/config")
     fun configPage(model: Model): String {
+        model.addAttribute("transUrl", Commons.transUrl)
         return "config"
     }
 
@@ -532,6 +533,7 @@ class AdminController(val movieService: MovieService,
     @PostMapping("/procSetConfig")
     fun setConfigProc(@ModelAttribute form: SetConfigForm, builder: UriComponentsBuilder): String {
         val appName = form.appName.ifBlank { Constants.DEFAULT_APP_NAME }
+        val transUrl = form.transUrl.ifBlank { "" }
 
         try {
             val config = mutableListOf<Config>()
@@ -540,10 +542,16 @@ class AdminController(val movieService: MovieService,
                 this.value = appName
                 config.add(this)
             }
+            Config().apply {
+                this.key = Constants.KEY_TRANS_URL
+                this.value = transUrl
+                config.add(this)
+            }
 
             configService.setConfig(config)
 
             Commons.appName = appName
+            Commons.transUrl = transUrl
         } catch (e:Exception) {
             return "redirect:" +
                     Commons.getPathUriString(

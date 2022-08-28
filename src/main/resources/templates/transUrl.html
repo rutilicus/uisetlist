@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" http-equiv="Content-Type" content="text/html" />
+    <title th:text="|${appName} - 移転|"></title>
+</head>
+<body>
+  <main>
+    <p>
+      <span th:text="${appName}"></span>は<a th:href="${transUrl}" th:text="${transUrl}"></a>に移転しました。
+    </p>
+    <p>
+      ユーザ作成リストの取得が必要な場合は<a href="javascript:exportUserList()">こちら</a>から取得してください。
+    </p>
+  </main>
+  <script th:inline="javascript">
+    /*<![CDATA[*/
+    function exportUserList() {
+      const userSongListJson = localStorage.getItem("allSongList");
+      if (typeof userSongListJson === "string") {
+        const blob = new Blob([userSongListJson], { type: "application/json" });
+        let dummyElem = document.createElement("a");
+        document.body.appendChild(dummyElem);
+        dummyElem.href = window.URL.createObjectURL(blob);
+        dummyElem.download = "uisetlist.json";
+        dummyElem.click();
+        document.body.removeChild(dummyElem);
+      }
+    }
+    /*]]>*/
+  </script>
+</body>
+</html>

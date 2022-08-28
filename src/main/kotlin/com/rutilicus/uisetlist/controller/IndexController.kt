@@ -18,8 +18,13 @@ class IndexController(val movieService: MovieService,
                       val metaTagsService: MetaTagsService) {
     @GetMapping("/")
     fun movie(model: Model): String {
-        model.addAttribute("metaTags", metaTagsService.findAll())
-        return "index"
+        if (Commons.transUrl.isBlank()) {
+            model.addAttribute("metaTags", metaTagsService.findAll())
+            return "index"
+        } else {
+            model.addAttribute("transUrl", Commons.transUrl)
+            return "transUrl"
+        }
     }
 
     @GetMapping("/song")

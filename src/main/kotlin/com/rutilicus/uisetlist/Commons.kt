@@ -14,6 +14,7 @@ import java.util.zip.ZipOutputStream
 class Commons {
     companion object {
         var appName = Constants.DEFAULT_APP_NAME
+        var transUrl = ""
 
         data class File(val fileName: String, val data: ByteArray)
 

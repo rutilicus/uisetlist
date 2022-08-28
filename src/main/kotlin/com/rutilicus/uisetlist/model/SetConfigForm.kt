@@ -5,4 +5,7 @@ import com.sun.istack.NotNull
 class SetConfigForm {
     @NotNull
     var appName = ""
+
+    @NotNull
+    var transUrl = ""
 }

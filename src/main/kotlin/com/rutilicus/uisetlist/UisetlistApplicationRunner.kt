@@ -15,5 +15,10 @@ class UisetlistApplicationRunner(val configRepository: ConfigRepository): Applic
                 it.first().value
             }
         }
+        configRepository.findByKey(Constants.KEY_TRANS_URL).let {
+            if (!it.isEmpty()) {
+                Commons.transUrl = it.first().value
+            }
+        }
     }
 }
